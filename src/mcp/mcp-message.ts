@@ -41,3 +41,18 @@ export function readToolCall(message: unknown): ToolCall | null {
 
   return { id, name: details.name, arguments: safeArguments };
 }
+
+export function toolErrorResponse(
+  call: ToolCall,
+  status: number,
+  body: string,
+) {
+  const message = `Tool ${call.name} failed with HTTP ${status}: ${body}`;
+
+  const result = {
+    content: [{ type: 'text' as const, text: message }],
+    isError: true,
+  };
+
+  return { jsonrpc: '2.0' as const, id: call.id, result };
+}

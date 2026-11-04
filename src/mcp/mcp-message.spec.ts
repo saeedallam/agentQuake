@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { readToolCall } from './mcp-message.js';
+import { readToolCall, toolErrorResponse } from './mcp-message.js';
 
 function toolCall(overrides: Record<string, unknown> = {}) {
   return {
@@ -68,4 +68,28 @@ describe('readToolCall', () => {
       expect(call?.arguments).toEqual({});
     },
   );
+});
+
+describe('toolErrorResponse', () => {
+  const call = { id: 7, name: 'get_weather', arguments: {} };
+
+  it('answers with a failed tool result the AI can read', () => {
+    expect(toolErrorResponse(call, 503, '{"error":"HTTP 503"}')).toEqual({
+      jsonrpc: '2.0',
+      id: 7,
+      result: {
+        content: [
+          {
+            type: 'text',
+            text: 'Tool get_weather failed with HTTP 503: {"error":"HTTP 503"}',
+          },
+        ],
+        isError: true,
+      },
+    });
+  });
+
+  it('keeps the id of the request, including string ids', () => {
+    expect(toolErrorResponse({ ...call, id: 'abc' }, 429, '').id).toBe('abc');
+  });
 });
