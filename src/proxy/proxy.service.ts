@@ -125,7 +125,7 @@ export class ProxyService {
   }
 }
 
-function errorResult(
+export function errorResult(
   status: number,
   error: string,
   startedAt: number,

@@ -10,5 +10,6 @@ import { UpstreamClient } from './upstream.client.js';
   imports: [FaultsModule, TracesModule],
   controllers: [ProxyController],
   providers: [ProxyService, TargetProvider, UpstreamClient],
+  exports: [TargetProvider, UpstreamClient],
 })
 export class ProxyModule {}
