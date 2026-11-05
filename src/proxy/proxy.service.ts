@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { FaultRegistry } from '../faults/fault-registry.js';
-import { planFaults, type PlannedFault } from '../faults/fault-planner.js';
+import { planFaults } from '../faults/fault-planner.js';
+import { runFaults } from '../faults/fault-runner.js';
 import { TraceRecorder } from '../traces/trace.recorder.js';
 import { TargetProvider } from './target.provider.js';
 import { UpstreamClient, UpstreamError } from './upstream.client.js';
@@ -57,26 +58,16 @@ export class ProxyService {
       sequence,
     });
 
-    const applied: PlannedFault[] = [];
+    const faultRun = await runFaults(planned, this.faults);
+
     let result: ProxyResult | undefined;
-    for (const fault of planned) {
-      const card = this.faults.get(fault.type);
-      if (!card) {
-        continue;
-      }
-
-      const outcome = await card.apply(fault.config);
-      applied.push(fault);
-
-      if (outcome.kind === 'respond') {
-        result = {
-          status: outcome.status,
-          headers: JSON_HEADERS,
-          body: outcome.body,
-          durationMs: Date.now() - startedAt,
-        };
-        break;
-      }
+    if (faultRun.outcome.kind === 'respond') {
+      result = {
+        status: faultRun.outcome.status,
+        headers: JSON_HEADERS,
+        body: faultRun.outcome.body,
+        durationMs: Date.now() - startedAt,
+      };
     }
 
     let upstreamDurationMs: number | null = null;
@@ -127,7 +118,7 @@ export class ProxyService {
       durationMs: result.durationMs,
       upstreamDurationMs,
       errorCode,
-      faults: applied,
+      faults: faultRun.applied,
     });
 
     return result;
