@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { readToolCall, toolErrorResponse } from './mcp-message.js';
+import {
+  parseJsonBody,
+  readToolCall,
+  toolErrorResponse,
+} from './mcp-message.js';
 
 function toolCall(overrides: Record<string, unknown> = {}) {
   return {
@@ -10,6 +14,23 @@ function toolCall(overrides: Record<string, unknown> = {}) {
     ...overrides,
   };
 }
+
+describe('parseJsonBody', () => {
+  it('parses a JSON body', () => {
+    expect(parseJsonBody(Buffer.from('{"id":7}'))).toEqual({ id: 7 });
+  });
+
+  it('returns null when there is no body', () => {
+    expect(parseJsonBody(null)).toBeNull();
+  });
+
+  it.each(['', '{abc', 'not json'])(
+    'returns null for a body that is not JSON: %j',
+    (text) => {
+      expect(parseJsonBody(Buffer.from(text))).toBeNull();
+    },
+  );
+});
 
 describe('readToolCall', () => {
   it('reads the id, tool name and arguments of a tools/call request', () => {

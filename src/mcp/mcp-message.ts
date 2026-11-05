@@ -4,6 +4,18 @@ export interface ToolCall {
   arguments: Record<string, unknown>;
 }
 
+export function parseJsonBody(body: Buffer | null): unknown {
+  if (body === null) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(body.toString('utf8'));
+  } catch {
+    return null;
+  }
+}
+
 export function readToolCall(message: unknown): ToolCall | null {
   if (
     typeof message !== 'object' ||
