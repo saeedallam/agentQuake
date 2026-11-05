@@ -13,7 +13,7 @@ const faultRuleSchema = z.object({
   type: z.string().min(1),
   target: z.object({
     tool: slugSchema,
-    path: z.string().startsWith('/').optional(),
+    path: z.string().min(1).optional(),
   }),
   probability: z.number().min(0).max(1).default(1),
   config: z.record(z.string(), z.unknown()).default({}),
