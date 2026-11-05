@@ -8,7 +8,8 @@ scenario, and records every call as a trace. Later phases add scoring of the
 agent's behavior.
 
 > Status: phase 1 (HTTP proxy, faults, YAML scenarios, traces) is complete.
-> The API may still change.
+> Phase 2 (MCP) is in progress: the Streamable HTTP proxy works, stdio is
+> next. The API may still change.
 
 ## Why
 
@@ -35,6 +36,27 @@ after:   http://localhost:3000/proxy/<runId>/weather/forecast
 ```
 
 Nothing else in the agent changes.
+
+## MCP tools
+
+For an MCP server over HTTP, register the server endpoint as the tool's
+`baseUrl` and point the agent at `/mcp-proxy/<runId>/<tool>`:
+
+```
+before:  https://weather.example.com/mcp
+after:   http://localhost:3000/mcp-proxy/<runId>/weather
+```
+
+Only `tools/call` requests can get faults; everything else passes through
+untouched. Target a tool by its MCP name with `path`:
+
+```yaml
+target: { tool: weather, path: 'get_*' }
+```
+
+When a fault fires, the agent receives a normal MCP tool result with
+`isError: true`, so the model sees that the tool failed. See
+[ADR 0005](docs/adr/0005-mcp-http-proxy.md).
 
 ## Faults
 
