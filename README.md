@@ -236,4 +236,4 @@ request must pass the checks listed there.
 
 ## License
 
-Not decided yet. Until a license is added, this code is not open source.
+[Apache-2.0](LICENSE)
