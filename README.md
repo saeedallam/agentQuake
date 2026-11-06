@@ -1,20 +1,56 @@
-# AgentChaos
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/logo-dark.png">
+    <img src="assets/logo-light.png" width="160" alt="AgentChaos logo: a robot head split by a lightning bolt">
+  </picture>
+</p>
 
-Chaos testing for AI agents.
+<h1 align="center">AgentChaos</h1>
+
+<p align="center"><b>Chaos testing for AI agents.</b><br>
+Break your agent before production does.</p>
+
+<p align="center">
+  <a href="https://github.com/saeedallam/agentchaos/actions/workflows/ci.yml"><img src="https://github.com/saeedallam/agentchaos/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <img src="https://img.shields.io/badge/status-phase%202%20(MCP)-FF5A1F" alt="Status: phase 2">
+  <img src="https://img.shields.io/badge/node-%E2%89%A522.12-339933?logo=node.js&logoColor=white" alt="Node.js 22.12 or newer">
+  <img src="https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white" alt="TypeScript">
+  <img src="https://img.shields.io/badge/NestJS-E0234E?logo=nestjs&logoColor=white" alt="NestJS">
+  <img src="https://img.shields.io/badge/PostgreSQL-4169E1?logo=postgresql&logoColor=white" alt="PostgreSQL">
+</p>
+
+<p align="center">
+  <a href="#quick-start">Quick start</a> ·
+  <a href="#scenarios">Scenarios</a> ·
+  <a href="#mcp-tools">MCP</a> ·
+  <a href="#roadmap">Roadmap</a> ·
+  <a href="docs/adr">Design decisions</a>
+</p>
+
+---
 
 AgentChaos sits as a proxy between an AI agent and the tools it calls. It
 forwards each call to the real tool, injects faults defined in a YAML
-scenario, and records every call as a trace. Later phases add scoring of the
-agent's behavior.
+scenario, and records every call as a trace, so you can see exactly how your
+agent behaves when things go wrong.
 
-> Status: phase 1 (HTTP proxy, faults, YAML scenarios, traces) is complete.
-> Phase 2 (MCP) is in progress: the Streamable HTTP proxy works, stdio is
-> next. The API may still change.
+> [!NOTE]
+> Phase 1 (HTTP proxy, faults, YAML scenarios, traces) is complete. Phase 2
+> (MCP) is in progress: the Streamable HTTP proxy works and stdio support is
+> being built. The API may still change.
 
 ## Why
 
 Agents look great in demos, where every tool answers instantly and
-correctly. In production, APIs slow down, rate limit and time out.
+correctly. In production, APIs slow down, rate limit and time out. When that
+happens, agents fail in ways that are hard to spot:
+
+- **They loop**, calling the same failing tool again and again while the
+  bill grows.
+- **They give up** on the first timeout, even when one retry would have
+  worked.
+- **They claim success** after a call failed, and the user never finds out.
+
 AgentChaos answers the question nobody tests: what does your agent do when
 its tools fail?
 
@@ -37,70 +73,19 @@ after:   http://localhost:3000/proxy/<runId>/weather/forecast
 
 Nothing else in the agent changes.
 
-## MCP tools
-
-For an MCP server over HTTP, register the server endpoint as the tool's
-`baseUrl` and point the agent at `/mcp-proxy/<runId>/<tool>`:
-
-```
-before:  https://weather.example.com/mcp
-after:   http://localhost:3000/mcp-proxy/<runId>/weather
-```
-
-Only `tools/call` requests can get faults; everything else passes through
-untouched. Target a tool by its MCP name with `path`:
-
-```yaml
-target: { tool: weather, path: 'get_*' }
-```
-
-When a fault fires, the agent receives a normal MCP tool result with
-`isError: true`, so the model sees that the tool failed. See
-[ADR 0005](docs/adr/0005-mcp-http-proxy.md).
-
-## Faults
-
-| Type         | What happens                              | Config            |
-| ------------ | ----------------------------------------- | ----------------- |
-| `latency`    | Waits, then calls the real tool           | `delayMs` (1000)  |
-| `http_error` | Answers with an error, tool is not called | `status` (503)    |
-| `timeout`    | Waits, then answers 504, tool not called  | `afterMs` (30000) |
-
-## Scenarios
-
-```yaml
-version: 1
-name: flaky-weather
-seed: 42 # same seed = same faults on the same requests
-
-faults:
-  - id: slow-forecast
-    type: latency
-    target: { tool: weather, path: '/forecast*' } # * matches any ending
-    probability: 0.5 # 0 = never, 1 = always (default 1)
-    config: { delayMs: 2000 }
-
-  - id: rate-limited
-    type: http_error
-    target: { tool: weather } # no path = every path of this tool
-    probability: 0.2
-    config: { status: 429 }
-```
-
-Whether a fault fires is decided by the run's seed, the request number and
-the fault id, so a run can be replayed exactly.
-
-## Getting started
+## Quick start
 
 Requirements: Node.js 22.12+, npm 11+ (npm 10.9 crashes while installing, see
 [ADR 0001](docs/adr/0001-use-esm-and-vitest.md)), Docker with Compose.
 
 ```bash
+git clone https://github.com/saeedallam/agentchaos.git
+cd agentchaos
 npm install                # also generates the Prisma client
 cp .env.example .env
 docker compose up -d       # PostgreSQL on 127.0.0.1:5433
 npm run db:migrate
-npm run start:dev
+npm run start:dev          # API on http://localhost:3000
 ```
 
 ## Usage
@@ -127,6 +112,40 @@ curl localhost:3000/runs/<runId>/traces
 curl -X POST localhost:3000/runs/<runId>/complete
 ```
 
+### Demo data
+
+`npm run db:seed` creates a `demo` project with four running runs against a
+fake upstream on `http://localhost:5000`: `...0001` (no faults), `...0002`
+(latency), `...0003` (http_error) and `...0004` (timeout). Seeding resets
+their traces, so the fault pattern is the same every time.
+
+## Scenarios
+
+A scenario is a YAML file that says which faults to inject, where, and how
+often.
+
+```yaml
+version: 1
+name: flaky-weather
+seed: 42 # same seed = same faults on the same requests
+
+faults:
+  - id: slow-forecast
+    type: latency
+    target: { tool: weather, path: '/forecast*' } # * matches any ending
+    probability: 0.5 # 0 = never, 1 = always (default 1)
+    config: { delayMs: 2000 }
+
+  - id: rate-limited
+    type: http_error
+    target: { tool: weather } # no path = every path of this tool
+    probability: 0.2
+    config: { status: 429 }
+```
+
+Whether a fault fires is decided by the run's seed, the request number and
+the fault id, so a run can be replayed exactly.
+
 Invalid scenarios are rejected with every problem listed:
 
 ```json
@@ -141,14 +160,50 @@ Invalid scenarios are rejected with every problem listed:
 }
 ```
 
-### Demo data
+### Faults
 
-`npm run db:seed` creates a `demo` project with four running runs against a
-fake upstream on `http://localhost:5000`: `...0001` (no faults), `...0002`
-(latency), `...0003` (http_error) and `...0004` (timeout). Seeding resets
-their traces, so the fault pattern is the same every time.
+| Type         | What happens                              | Config            |
+| ------------ | ----------------------------------------- | ----------------- |
+| `latency`    | Waits, then calls the real tool           | `delayMs` (1000)  |
+| `http_error` | Answers with an error, tool is not called | `status` (503)    |
+| `timeout`    | Waits, then answers 504, tool not called  | `afterMs` (30000) |
 
-## Scripts
+Faults are plugins, so a new one can be added without touching the proxy or
+the database schema. See [Contributing](#contributing).
+
+## MCP tools
+
+For an MCP server over HTTP, register the server endpoint as the tool's
+`baseUrl` and point the agent at `/mcp-proxy/<runId>/<tool>`:
+
+```
+before:  https://weather.example.com/mcp
+after:   http://localhost:3000/mcp-proxy/<runId>/weather
+```
+
+Only `tools/call` requests can get faults; everything else passes through
+untouched. Target a tool by its MCP name with `path`:
+
+```yaml
+target: { tool: weather, path: 'get_*' }
+```
+
+When a fault fires, the agent receives a normal MCP tool result with
+`isError: true`, so the model sees that the tool failed. See
+[ADR 0005](docs/adr/0005-mcp-http-proxy.md).
+
+## Roadmap
+
+- [x] **Phase 1: HTTP proxy.** Seeded faults (latency, HTTP errors,
+      timeouts), YAML scenarios, traces with secrets redacted
+- [ ] **Phase 2: MCP.** Streamable HTTP proxy is done, stdio is in progress
+- [ ] **Phase 3: Scoring.** Repeated runs in the background, evaluators for
+      loops, retries, cost, false success and prompt injection, and a report
+      with a score
+- [ ] **Phase 4: Tooling.** A CLI (`npx agentchaos run`), a GitHub Action
+      that fails the build when the score drops, and a dashboard
+
+## Development
 
 | Script               | What it does                               |
 | -------------------- | ------------------------------------------ |
@@ -165,12 +220,19 @@ their traces, so the fault pattern is the same every time.
 CI runs all checks and the end-to-end tests against PostgreSQL on every pull
 request.
 
-## Architecture
+### Architecture
 
 Decisions are recorded in [`docs/adr`](docs/adr). In short: the controller
 translates HTTP, `ProxyService` orchestrates, fault planning and trace
 redaction are pure functions, and database and network access live in small
 infrastructure classes.
+
+## Contributing
+
+Conventions for humans and AI coding agents are in
+[`AGENTS.md`](AGENTS.md). Commits follow
+[Conventional Commits](https://www.conventionalcommits.org), and every pull
+request must pass the checks listed there.
 
 ## License
 
