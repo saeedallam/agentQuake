@@ -1,6 +1,9 @@
-import type { FaultOutcome, FaultPlugin } from '../core/faults/fault.js';
-import type { FaultRule } from '../core/faults/fault-planner.js';
-import type { FaultRegistry } from '../core/faults/fault-registry.js';
+import type {
+  FaultOutcome,
+  FaultPlugin,
+  FaultRule,
+  FaultRegistry,
+} from 'agentquake/core';
 import type { TraceRecorder } from '../traces/trace.recorder.js';
 import { ProxyService, type ProxyRequest } from './proxy.service.js';
 import type { RunInfo, TargetProvider, ToolInfo } from './target.provider.js';

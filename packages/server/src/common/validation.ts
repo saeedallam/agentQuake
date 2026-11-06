@@ -1,12 +1,8 @@
 import { BadRequestException } from '@nestjs/common';
 import type { z } from 'zod';
-import { issuesFrom, type ValidationIssue } from '../core/validation.js';
+import { issuesFrom, type ValidationIssue } from 'agentquake/core';
 
-export {
-  issuesFrom,
-  slugSchema,
-  type ValidationIssue,
-} from '../core/validation.js';
+export { issuesFrom, slugSchema, type ValidationIssue } from 'agentquake/core';
 
 export function invalidInput(issues: ValidationIssue[]): BadRequestException {
   return new BadRequestException({ error: 'INVALID_INPUT', issues });

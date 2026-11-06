@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../common/prisma/prisma.service.js';
-import type { FaultRule } from '../core/faults/fault-planner.js';
-import { scenarioSchema } from '../core/scenarios/scenario.js';
+import { type FaultRule, scenarioSchema } from 'agentquake/core';
 
 export interface RunInfo {
   id: string;

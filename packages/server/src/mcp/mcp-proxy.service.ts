@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { FaultRegistry } from '../core/faults/fault-registry.js';
-import { planFaults } from '../core/faults/fault-planner.js';
-import { runFaults } from '../core/faults/fault-runner.js';
+import {
+  FaultRegistry,
+  planFaults,
+  runFaults,
+  parseJsonBody,
+  readToolCall,
+  toolErrorResponse,
+} from 'agentquake/core';
 import { errorResult, type ProxyResult } from '../proxy/proxy.service.js';
 import { TargetProvider, type ToolInfo } from '../proxy/target.provider.js';
 import { UpstreamClient, UpstreamError } from '../proxy/upstream.client.js';
 import { TraceRecorder } from '../traces/trace.recorder.js';
-import {
-  parseJsonBody,
-  readToolCall,
-  toolErrorResponse,
-} from '../core/mcp/mcp-message.js';
 
 export interface McpProxyRequest {
   runId: string;
