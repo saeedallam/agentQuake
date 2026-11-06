@@ -122,4 +122,27 @@ describe('runStdio', () => {
     ).resolves.toBeDefined();
     await bridge.stop();
   });
+
+  it('empties a tool result without marking it as an error', async () => {
+    const bridge = startBridge({
+      faults: [
+        {
+          id: 'empty',
+          type: 'empty_response',
+          target: { tool: 'get_forecast' },
+        },
+      ],
+    });
+
+    bridge.send(forecastCall(8));
+
+    const reply = await bridge.waitFor((message) => message.id === 8);
+    expect(reply.result).toEqual({ content: [{ type: 'text', text: '' }] });
+    expect(bridge.run.report().calls[0]).toMatchObject({
+      ok: true,
+      corrupted: true,
+      faults: ['empty'],
+    });
+    await bridge.stop();
+  });
 });

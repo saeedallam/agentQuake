@@ -12,6 +12,7 @@ import { ServerBridge } from '../core/stdio/server-bridge.js';
 import type { Run } from '../library/run.js';
 import { ToolFailure } from '../library/tool-failure.js';
 import { FailedReply } from './failed-reply.js';
+import { mcpPayload } from './payloads.js';
 
 export interface StdioOptions {
   run: Run;
@@ -102,6 +103,7 @@ export async function runStdio(options: StdioOptions): Promise<number> {
         }
         return reply;
       },
+      { payload: mcpPayload },
     );
     try {
       return await send(call.arguments);

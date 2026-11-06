@@ -8,6 +8,7 @@ export {
 } from './library/trace-store.js';
 export { summarizeCalls, type CallSummary } from './library/summary.js';
 export { ToolFailure } from './library/tool-failure.js';
+export type { ResultPayload } from './library/payload.js';
 export {
   QuakeConfigError,
   type FaultRuleInput,

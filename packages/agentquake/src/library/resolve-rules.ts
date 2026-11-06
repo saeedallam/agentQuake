@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import type { FaultRule } from '../core/faults/fault-planner.js';
+import type { FaultRegistry } from '../core/faults/fault-registry.js';
 import { issuesFrom, type ValidationIssue } from '../core/validation.js';
 import { PRESET_NAMES, PRESETS, type PresetName } from './presets.js';
 import type { TraceStore } from './trace-store.js';
@@ -43,8 +44,9 @@ const optionsSchema = z.object({
 
 export function resolveRules(
   options: QuakeOptions,
-  faultTypes: string[],
+  registry: FaultRegistry,
 ): FaultRule[] {
+  const faultTypes = registry.types();
   const parsed = optionsSchema.safeParse(options);
   if (!parsed.success) {
     throw new QuakeConfigError(issuesFrom(parsed.error));
@@ -61,11 +63,17 @@ export function resolveRules(
     }
     seen.add(rule.id);
 
-    if (!faultTypes.includes(rule.type)) {
+    const plugin = registry.get(rule.type);
+    if (!plugin) {
       issues.push({
         path: `faults.${index}.type`,
         message: `Unknown fault type "${rule.type}". Use one of: ${faultTypes.join(', ')}`,
       });
+      return;
+    }
+
+    for (const message of plugin.validateConfig?.(rule.config) ?? []) {
+      issues.push({ path: `faults.${index}.config`, message });
     }
   });
   if (issues.length > 0) {
