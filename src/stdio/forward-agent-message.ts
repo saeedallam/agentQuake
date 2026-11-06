@@ -1,4 +1,4 @@
-import { parseJsonBody } from '../mcp/mcp-message.js';
+import { readMessageId } from '../mcp/mcp-message.js';
 
 export async function forwardAgentMessage(
   line: string,
@@ -22,11 +22,8 @@ export async function forwardAgentMessage(
 
     return null;
   } catch (error) {
-    const message = parseJsonBody(Buffer.from(line)) as {
-      id?: unknown;
-    } | null;
-    const id = message?.id;
-    if (typeof id !== 'string' && typeof id !== 'number') {
+    const id = readMessageId(line);
+    if (id === null) {
       return null;
     }
 

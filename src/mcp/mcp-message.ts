@@ -54,6 +54,17 @@ export function readToolCall(message: unknown): ToolCall | null {
   return { id, name: details.name, arguments: safeArguments };
 }
 
+export function readMessageId(line: string): string | number | null {
+  const message = parseJsonBody(Buffer.from(line)) as { id?: unknown } | null;
+  const id = message?.id;
+
+  if (typeof id !== 'string' && typeof id !== 'number') {
+    return null;
+  }
+
+  return id;
+}
+
 export function toolErrorResponse(
   call: ToolCall,
   status: number,
