@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { PlannedFault } from './fault-planner.js';
 import { FaultRegistry } from './fault-registry.js';
-import { runFaults } from './fault-runner.js';
+import { beforeCallFaults, corruptResult, runFaults } from './fault-runner.js';
 
 const latency: PlannedFault = {
   ruleId: 'slow',
@@ -53,5 +53,43 @@ describe('runFaults', () => {
 
     expect(run.applied).toEqual([error503]);
     expect(run.outcome).toMatchObject({ kind: 'respond', status: 503 });
+  });
+});
+
+describe('corruptResult', () => {
+  const registry = new FaultRegistry();
+  const empty: PlannedFault = {
+    ruleId: 'empty',
+    type: 'empty_response',
+    config: { mode: 'no-results' },
+  };
+  const cut: PlannedFault = {
+    ruleId: 'cut',
+    type: 'truncated_response',
+    config: { keep: 0.5 },
+  };
+
+  it('applies after-call faults in order and lists the ones that changed something', () => {
+    const value = { note: 'abcd', items: [1, 2] };
+
+    expect(corruptResult(value, [latency, empty, cut], registry)).toEqual({
+      value: { note: 'ab', items: [] },
+      corruptedBy: ['empty', 'cut'],
+    });
+    expect(value).toEqual({ note: 'abcd', items: [1, 2] });
+  });
+
+  it('does not list a fault that had nothing to change', () => {
+    expect(corruptResult({ items: [] }, [empty], registry)).toEqual({
+      value: { items: [] },
+      corruptedBy: [],
+    });
+  });
+
+  it('separates the faults that act before the call', () => {
+    expect(beforeCallFaults([latency, empty, error503], registry)).toEqual([
+      'slow',
+      'down',
+    ]);
   });
 });

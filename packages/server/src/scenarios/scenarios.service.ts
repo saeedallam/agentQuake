@@ -21,7 +21,11 @@ export class ScenariosService {
       throw new NotFoundException({ error: 'PROJECT_NOT_FOUND' });
     }
 
-    const parsed = parseScenario(sourceYaml, this.faults.types());
+    const parsed = parseScenario(
+      sourceYaml,
+      this.faults.types(),
+      this.faults.afterCallTypes(),
+    );
     if (!parsed.ok) {
       throw invalidInput(parsed.issues);
     }

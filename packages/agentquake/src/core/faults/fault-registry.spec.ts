@@ -21,6 +21,19 @@ describe('FaultRegistry', () => {
   it('lists the known types', () => {
     const registry = new FaultRegistry();
 
-    expect(registry.types()).toEqual(['latency', 'http_error', 'timeout']);
+    expect(registry.types()).toEqual([
+      'latency',
+      'http_error',
+      'timeout',
+      'empty_response',
+      'truncated_response',
+    ]);
+  });
+
+  it('lists the types that act after the call', () => {
+    expect(new FaultRegistry().afterCallTypes()).toEqual([
+      'empty_response',
+      'truncated_response',
+    ]);
   });
 });
