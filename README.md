@@ -108,7 +108,7 @@ Requirements: Node.js 22.12+, npm 11+ (npm 10.9 crashes while installing, see
 git clone https://github.com/saeedallam/agentquake.git
 cd agentquake
 cp packages/server/.env.example packages/server/.env
-npm install                # also builds the core and generates the Prisma client
+npm ci                     # also builds the core and generates the Prisma client
 docker compose up -d       # PostgreSQL on 127.0.0.1:5433
 npm run db:migrate
 npm run start:dev          # API on http://localhost:3000
