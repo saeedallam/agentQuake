@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../common/prisma/prisma.service.js';
 import type { Prisma } from '../generated/prisma/client.js';
-import { scenarioSchema } from '../scenarios/scenario.js';
+import { scenarioSchema } from '../core/scenarios/scenario.js';
 
 const MAX_SEED = 2_147_483_647;
 

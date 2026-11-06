@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { FaultRegistry } from './fault-registry.js';
+import { FaultRegistry } from '../core/faults/fault-registry.js';
 
 @Module({
-  providers: [FaultRegistry],
+  providers: [{ provide: FaultRegistry, useValue: new FaultRegistry() }],
   exports: [FaultRegistry],
 })
 export class FaultsModule {}

@@ -1,6 +1,6 @@
-import type { FaultOutcome, FaultPlugin } from '../faults/fault.js';
-import type { FaultRule } from '../faults/fault-planner.js';
-import type { FaultRegistry } from '../faults/fault-registry.js';
+import type { FaultOutcome, FaultPlugin } from '../core/faults/fault.js';
+import type { FaultRule } from '../core/faults/fault-planner.js';
+import type { FaultRegistry } from '../core/faults/fault-registry.js';
 import type { TraceRecorder } from '../traces/trace.recorder.js';
 import { ProxyService, type ProxyRequest } from './proxy.service.js';
 import type { RunInfo, TargetProvider, ToolInfo } from './target.provider.js';

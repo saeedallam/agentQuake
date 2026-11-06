@@ -29,13 +29,16 @@ npm run db:seed      # optional demo data
 - Database changes go through `prisma/schema.prisma` and a new migration
   (`npm run db:migrate -- --name <change>`). Never edit an applied
   migration.
+- **`src/core` is the part that will be published** (ADR 0006): faults,
+  fault planning, scenarios, validation helpers, trace policy, MCP message
+  helpers and the stdio `ServerBridge`. It must not import NestJS, Prisma,
+  `node:http` or anything outside `src/core`. The linter enforces this.
+  Everything else in `src` is the NestJS server.
 - Faults and evaluators are plugins (Strategy pattern). A fault is a class
-  implementing `FaultPlugin` in `src/faults`, registered in
+  implementing `FaultPlugin` in `src/core/faults`, registered in
   `FaultRegistry`. Adding one must not require changes to `ProxyService`
   or the database schema. That is why `fault_type` is a string column.
-- Keep rules in pure functions with no NestJS or Prisma imports
-  (`src/faults/fault-planner.ts`, `src/scenarios/scenario.ts`,
-  `src/traces/trace-policy.ts`). See ADR 0003 and ADR 0004.
+- Keep rules in pure functions in `src/core`. See ADR 0003, 0004 and 0006.
 - Validate input with zod (`src/common/validation.ts`).
 - Never store secrets. Redact `Authorization`, cookies and API keys from
   traces before writing them.
