@@ -10,6 +10,10 @@ describe('matchesTarget', () => {
     expect(matchesTarget({ tool: 'todos' }, 'todos', '/todos/1')).toBe(true);
   });
 
+  it('matches every tool when the target tool is *', () => {
+    expect(matchesTarget({ tool: '*' }, 'email', '/inbox')).toBe(true);
+  });
+
   it('does not match a different tool', () => {
     expect(matchesTarget({ tool: 'todos' }, 'email', '/inbox')).toBe(false);
   });
