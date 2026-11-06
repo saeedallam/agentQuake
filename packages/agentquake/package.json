@@ -1,25 +1,55 @@
 {
   "name": "agentquake",
-  "version": "0.0.1",
-  "private": true,
-  "description": "Chaos testing for AI agents: inject faults between agents and their tools, record every call, and score how the agent behaves.",
+  "version": "0.1.0",
+  "description": "Chaos testing for AI agents: make your agent's tools fail inside your tests and see whether it copes, retries or lies about success.",
+  "keywords": [
+    "ai",
+    "agents",
+    "llm",
+    "chaos-engineering",
+    "fault-injection",
+    "testing",
+    "mcp",
+    "vitest",
+    "jest"
+  ],
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/saeedallam/agentQuake.git",
+    "directory": "packages/agentquake"
+  },
+  "homepage": "https://github.com/saeedallam/agentQuake#readme",
+  "bugs": "https://github.com/saeedallam/agentQuake/issues",
   "type": "module",
+  "engines": {
+    "node": ">=22.12"
+  },
+  "sideEffects": false,
   "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
     "./core": {
       "types": "./dist/core/index.d.ts",
       "default": "./dist/core/index.js"
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "!dist/**/*.spec.*"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "dev": "tsc -p tsconfig.build.json --watch",
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build && npm test"
   },
   "dependencies": {
     "yaml": "^2.9.1",

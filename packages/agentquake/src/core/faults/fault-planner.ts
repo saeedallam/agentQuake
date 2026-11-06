@@ -1,5 +1,7 @@
 import { roll } from './seeded-random.js';
 
+export const ANY_TOOL = '*';
+
 export interface FaultTarget {
   tool: string;
   path?: string;
@@ -31,7 +33,7 @@ export function matchesTarget(
   toolSlug: string,
   path: string,
 ): boolean {
-  if (target.tool !== toolSlug) {
+  if (target.tool !== ANY_TOOL && target.tool !== toolSlug) {
     return false;
   }
 
