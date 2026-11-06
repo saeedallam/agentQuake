@@ -1,8 +1,9 @@
-# Library API (planned for 0.1.0)
+# Library API (0.1.0)
 
-Status: design, agreed before implementation (ADR 0006, step 3). Nothing on
-this page is built yet. Changing it is cheap until `agentquake@0.1.0` is
-published; after that, every change can break someone's tests.
+Status: built in `packages/agentquake/src/library`. This page was agreed
+before the code (ADR 0006, step 3); the notes below record where the build
+differs. After `agentquake@0.1.0` is published, every change can break
+someone's tests.
 
 ## The ten lines
 
@@ -60,23 +61,28 @@ quake({
 });
 ```
 
-`target.path` is not used by the library: a function has no path.
+`target.path` is not used by the library: a function has no path. Tool
+names can be any non-empty string (`getWeather`), unlike server scenarios,
+which use slugs.
 
 ### Presets
 
-| Preset         | Faults                                     |
-| -------------- | ------------------------------------------ |
-| `flaky`        | `http_error` 503, probability 0.3          |
-| `rate-limited` | `http_error` 429, probability 0.5          |
-| `slow`         | `latency` 1000 ms, probability 0.5         |
-| `outage`       | `http_error` 503, probability 1            |
+| Preset         | Faults                             |
+| -------------- | ---------------------------------- |
+| `flaky`        | `http_error` 503, probability 0.3  |
+| `rate-limited` | `http_error` 429, probability 0.5  |
+| `slow`         | `latency` 1000 ms, probability 0.5 |
+| `outage`       | `http_error` 503, probability 1    |
 
-Presets apply to every wrapped tool. Delays are short so test suites stay
+Presets apply to every wrapped tool: their rules target the tool `*`, which
+`matchesTarget` treats as "any tool". Delays are short so test suites stay
 fast.
 
 ## `run.tool(name, fn)`
 
-Returns a function with exactly the same type as `fn`. Each call:
+Returns a function with the same parameters as `fn` that always returns a
+promise (`(...args) => Promise<Awaited<Result>>`): even a synchronous tool
+becomes asynchronous, because a fault may wait. Each call:
 
 1. gets the next sequence number of the run;
 2. plans faults for `name` from the seed, the sequence number and the rules;

@@ -198,9 +198,9 @@ When a fault fires, the agent receives a normal MCP tool result with
       timeouts), YAML scenarios, traces with secrets redacted
 - [ ] **Phase 2: MCP.** Streamable HTTP proxy is done; the stdio bridge is
       built and will ship with the CLI
-- [ ] **Library (0.1.0).** `npm i -D agentquake`, wrap your tools inside a
-      Vitest or Jest test, no server needed. See the
-      [planned API](docs/library-api.md)
+- [x] **Library (0.1.0).** `npm i -D agentquake`, wrap your tools inside a
+      Vitest or Jest test, no server needed. See
+      [the package README](packages/agentquake/README.md)
 - [ ] **CLI.** `npx agentquake proxy` and `npx agentquake stdio`, traces in
       a JSONL file
 - [ ] **Scoring.** Evaluators for loops, retries, cost, false success and
