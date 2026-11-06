@@ -5,7 +5,7 @@
   </picture>
 </p>
 
-<h1 align="center">agentquake</h1>
+<h1 align="center">agentQuake</h1>
 
 <p align="center"><b>Chaos testing for AI agents.</b><br>
 Break your agent before production does.</p>
