@@ -72,7 +72,7 @@ describe('forwardAgentMessage', () => {
       id: 7,
       error: {
         code: -32603,
-        message: 'AgentChaos could not deliver the message: HTTP 409',
+        message: 'agentquake could not deliver the message: HTTP 409',
       },
     });
   });

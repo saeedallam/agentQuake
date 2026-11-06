@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <title>agentquake</title>
+  <g transform="translate(0 32)">
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="256" y1="148" x2="256" y2="104" stroke="#1C1C1C" stroke-width="26"/>
+    <rect x="104" y="148" width="304" height="248" rx="76" stroke="#1C1C1C" stroke-width="30"/>
+    <path d="M104 236 H84 a20 20 0 0 0 -20 20 v32 a20 20 0 0 0 20 20 H104" stroke="#1C1C1C" stroke-width="26"/>
+    <path d="M408 236 H428 a20 20 0 0 1 20 20 v32 a20 20 0 0 1 -20 20 H408" stroke="#1C1C1C" stroke-width="26"/>
+    <path d="M28 214 q-14 58 0 116" stroke="#1C1C1C" stroke-width="16" opacity="0.55"/>
+    <path d="M484 214 q14 58 0 116" stroke="#1C1C1C" stroke-width="16" opacity="0.55"/>
+    <path d="M150 280 H196 L216 236 L238 326 L260 196 L284 352 L306 248 L324 296 L338 280 H362" stroke="#FF5A1F" stroke-width="24"/>
+  </g>
+  <circle cx="256" cy="80" r="28" fill="#FF5A1F"/>
+  </g>
+</svg>

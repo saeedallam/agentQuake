@@ -29,7 +29,7 @@ in a form it can read. MCP versions also differ in how they start a session
   protocol error or an HTTP error status would be handled by the client
   library instead.
 - If the real server is down or slow, the proxy answers 502 or 504 like the
-  HTTP proxy, because that is what the agent would see without AgentChaos.
+  HTTP proxy, because that is what the agent would see without agentquake.
 - Faults are applied by `runFaults`, shared with the HTTP proxy.
 
 ## Consequences

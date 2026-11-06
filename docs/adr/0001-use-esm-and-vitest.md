@@ -5,7 +5,7 @@
 
 ## Context
 
-AgentChaos is a new open-source project started in 2026. Its core
+agentquake is a new open-source project started in 2026. Its core
 dependencies are moving to ES modules: NestJS 12 scaffolds ESM projects
 by default (with Vitest), and Prisma 7 ships as ESM. The original plan
 listed Jest as the test runner, which NestJS 12 only pairs with

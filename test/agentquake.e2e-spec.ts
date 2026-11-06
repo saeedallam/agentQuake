@@ -23,7 +23,7 @@ faults:
     config: { status: 503 }
 `;
 
-describe('AgentChaos (e2e)', () => {
+describe('agentquake (e2e)', () => {
   let app: NestExpressApplication;
   let upstream: http.Server;
   let upstreamUrl: string;

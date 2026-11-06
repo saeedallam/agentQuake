@@ -1,17 +1,17 @@
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/logo-dark.png">
-    <img src="assets/logo-light.png" width="160" alt="AgentChaos logo: a robot head split by a lightning bolt">
+    <img src="assets/logo-light.png" width="160" alt="agentquake logo: a robot head whose face is a seismograph line">
   </picture>
 </p>
 
-<h1 align="center">AgentChaos</h1>
+<h1 align="center">agentquake</h1>
 
 <p align="center"><b>Chaos testing for AI agents.</b><br>
 Break your agent before production does.</p>
 
 <p align="center">
-  <a href="https://github.com/saeedallam/agentchaos/actions/workflows/ci.yml"><img src="https://github.com/saeedallam/agentchaos/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/saeedallam/agentquake/actions/workflows/ci.yml"><img src="https://github.com/saeedallam/agentquake/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <img src="https://img.shields.io/badge/status-phase_2_MCP-FF5A1F" alt="Status: phase 2, MCP">
   <img src="https://img.shields.io/badge/node-22.12%2B-5FA04E?logo=nodedotjs&amp;logoColor=white" alt="Node.js 22.12+">
   <img src="https://img.shields.io/badge/TypeScript-6-3178C6?logo=typescript&amp;logoColor=white" alt="TypeScript 6">
@@ -29,7 +29,7 @@ Break your agent before production does.</p>
 
 ---
 
-AgentChaos sits as a proxy between an AI agent and the tools it calls. It
+agentquake sits as a proxy between an AI agent and the tools it calls. It
 forwards each call to the real tool, injects faults defined in a YAML
 scenario, and records every call as a trace, so you can see exactly how your
 agent behaves when things go wrong.
@@ -51,13 +51,13 @@ happens, agents fail in ways that are hard to spot:
   worked.
 - **They claim success** after a call failed, and the user never finds out.
 
-AgentChaos answers the question nobody tests: what does your agent do when
+agentquake answers the question nobody tests: what does your agent do when
 its tools fail?
 
 ## How it works
 
 ```
-Agent  ──>  AgentChaos  ──>  Real tool
+Agent  ──>  agentquake  ──>  Real tool
               │
               ├─ plans faults from the scenario (seeded, repeatable)
               ├─ applies them: delay, error status, or timeout
@@ -79,8 +79,8 @@ Requirements: Node.js 22.12+, npm 11+ (npm 10.9 crashes while installing, see
 [ADR 0001](docs/adr/0001-use-esm-and-vitest.md)), Docker with Compose.
 
 ```bash
-git clone https://github.com/saeedallam/agentchaos.git
-cd agentchaos
+git clone https://github.com/saeedallam/agentquake.git
+cd agentquake
 npm install                # also generates the Prisma client
 cp .env.example .env
 docker compose up -d       # PostgreSQL on 127.0.0.1:5433
@@ -200,7 +200,7 @@ When a fault fires, the agent receives a normal MCP tool result with
 - [ ] **Phase 3: Scoring.** Repeated runs in the background, evaluators for
       loops, retries, cost, false success and prompt injection, and a report
       with a score
-- [ ] **Phase 4: Tooling.** A CLI (`npx agentchaos run`), a GitHub Action
+- [ ] **Phase 4: Tooling.** A CLI (`npx agentquake run`), a GitHub Action
       that fails the build when the score drops, and a dashboard
 
 ## Development
@@ -236,4 +236,4 @@ request must pass the checks listed there.
 
 ## License
 
-Not decided yet. Until a license is added, this code is not open source.
+[Apache-2.0](LICENSE)
