@@ -1,10 +1,11 @@
+import { FaultRegistry } from '../core/faults/fault-registry.js';
 import { QuakeConfigError, resolveRules } from './resolve-rules.js';
 
-const TYPES = ['latency', 'http_error', 'timeout'];
+const registry = new FaultRegistry();
 
 describe('resolveRules', () => {
   it('returns no rules without a preset or faults', () => {
-    expect(resolveRules({}, TYPES)).toEqual([]);
+    expect(resolveRules({}, registry)).toEqual([]);
   });
 
   it('puts preset rules first, then faults with defaults filled in', () => {
@@ -15,7 +16,7 @@ describe('resolveRules', () => {
           { id: 'slow-email', type: 'latency', target: { tool: 'sendEmail' } },
         ],
       },
-      TYPES,
+      registry,
     );
 
     expect(rules).toEqual([
@@ -39,7 +40,7 @@ describe('resolveRules', () => {
             { id: 'a', type: 'latency', target: { tool: 'x' } },
           ],
         },
-        TYPES,
+        registry,
       );
 
     expect(resolve).toThrow(QuakeConfigError);
@@ -62,7 +63,7 @@ describe('resolveRules', () => {
             { id: 'a', type: 'latency', target: { tool: 'x' }, probability: 2 },
           ],
         },
-        TYPES,
+        registry,
       ),
     ).toThrow(/preset[\s\S]*faults\.0\.probability/);
   });

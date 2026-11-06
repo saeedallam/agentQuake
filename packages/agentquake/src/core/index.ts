@@ -1,3 +1,4 @@
+export * from './faults/empty-response.fault.js';
 export * from './faults/fault.js';
 export * from './faults/fault-planner.js';
 export * from './faults/fault-registry.js';
@@ -6,7 +7,9 @@ export * from './faults/http-error.fault.js';
 export * from './faults/latency.fault.js';
 export * from './faults/seeded-random.js';
 export * from './faults/sleep.js';
+export * from './faults/json-value.js';
 export * from './faults/timeout.fault.js';
+export * from './faults/truncated-response.fault.js';
 export * from './mcp/mcp-message.js';
 export * from './scenarios/scenario.js';
 export * from './stdio/server-bridge.js';

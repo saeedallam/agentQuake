@@ -40,12 +40,13 @@ The package is ESM only and needs Node.js 22.12 or newer.
 
 ## Presets
 
-| Preset         | What happens to every wrapped tool |
-| -------------- | ---------------------------------- |
-| `flaky`        | Fails with 503 in 30% of calls     |
-| `rate-limited` | Fails with 429 in 50% of calls     |
-| `slow`         | Waits 1 second in 50% of calls     |
-| `outage`       | Fails with 503 on every call       |
+| Preset         | What happens to every wrapped tool                                        |
+| -------------- | ------------------------------------------------------------------------- |
+| `flaky`        | Fails with 503 in 30% of calls                                            |
+| `rate-limited` | Fails with 429 in 50% of calls                                            |
+| `slow`         | Waits 1 second in 50% of calls                                            |
+| `outage`       | Fails with 503 on every call                                              |
+| `silent`       | Answers 200, but empties the lists (30%) or cuts the answer in half (30%) |
 
 ## Your own faults
 
@@ -55,7 +56,7 @@ const run = quake({
   faults: [
     {
       id: 'email-down',
-      type: 'http_error', // or 'latency', 'timeout'
+      type: 'http_error', // or latency, timeout, empty_response, truncated_response
       target: { tool: 'sendEmail' },
       probability: 0.5,
       config: { status: 503 },
@@ -76,6 +77,8 @@ report.calls; // every tool call: arguments, faults, result or error
 report.injectedFaults; // how many faults fired
 report.failedTools; // tools whose last call failed
 report.falseSuccess; // the agent claimed success after a tool failed
+report.corruptedCalls; // calls whose answer a silent fault changed
+report.leakedGarbage; // a silent fault fired and the answer shows undefined, null or NaN
 ```
 
 `falseSuccess` is `true` when a tool's last call failed and the agent's
@@ -94,6 +97,42 @@ Two limits to know about:
 - Only the last call of each tool counts. If a tool fails and the agent
   recovers by calling a different tool, the first tool still counts as
   failed. Marking the tools that matter is planned.
+
+## Silent faults
+
+Some failures do not look like failures: the tool answers 200, but the
+answer is empty or cut short. Nothing throws, so an agent that does not
+check what it got carries on as if all were fine.
+
+| Fault                | What the agent gets                                     | Config                                      |
+| -------------------- | ------------------------------------------------------- | ------------------------------------------- |
+| `empty_response`     | `""`, `[]` or `{}`; with `no-results`, every list empty | `mode`: `blank` (default) or `no-results`   |
+| `truncated_response` | The first part of every string and list                 | `keep`: fraction kept, 0 to 1 (default 0.5) |
+
+```ts
+const run = quake({
+  faults: [
+    { id: 'empty', type: 'empty_response', target: { tool: 'getWeather' } },
+  ],
+});
+
+const answer = await run.agent(async () => {
+  const weather = await run.tool('getWeather', getWeather)('Cairo');
+  return `It is ${weather.temp} degrees`; // "It is undefined degrees"
+});
+
+run.report().leakedGarbage; // true
+```
+
+A silent fault is only counted when it actually changed the answer. Results
+that are not plain JSON (a `Date`, a `Buffer`) are left alone. The proxy
+changes JSON and text bodies, and `stdio` changes MCP `structuredContent`
+and text content the same way; `isError` stays `false`.
+
+Research on agents found that empty and truncated answers from the model
+hurt more than crashes and are rarely diagnosed
+([AgentChaos](https://floritange.github.io/AgentChaos/)). These faults
+apply the same idea to tool answers.
 
 ## Same seed, same faults
 

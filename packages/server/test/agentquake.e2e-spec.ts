@@ -148,6 +148,23 @@ describe('agentquake (e2e)', () => {
     ]);
   });
 
+  it('rejects silent faults until the server supports them', async () => {
+    const server = app.getHttpServer();
+
+    const response = await request(server)
+      .post(`/projects/${project}/scenarios`)
+      .set('content-type', 'text/yaml')
+      .send(brokenForecastYaml.replace('http_error', 'empty_response'))
+      .expect(400);
+
+    expect(response.body.issues).toEqual([
+      expect.objectContaining({
+        path: 'faults.0.type',
+        message: expect.stringContaining('not supported here yet'),
+      }),
+    ]);
+  });
+
   it('rejects a scenario that targets a tool the project does not have', async () => {
     const server = app.getHttpServer();
 

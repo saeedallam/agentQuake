@@ -79,4 +79,29 @@ describe('parseScenario', () => {
 
     expect(result.ok).toBe(false);
   });
+
+  it('rejects fault types the caller does not support yet', () => {
+    const result = parseScenario(
+      `version: 1
+name: silent
+faults:
+  - id: empty
+    type: empty_response
+    target: { tool: weather }
+`,
+      ['latency', 'empty_response'],
+      ['empty_response'],
+    );
+
+    expect(result).toEqual({
+      ok: false,
+      issues: [
+        {
+          path: 'faults.0.type',
+          message:
+            '"empty_response" is not supported here yet; use the agentquake library or CLI',
+        },
+      ],
+    });
+  });
 });

@@ -5,6 +5,7 @@ export interface ToolCallRecord {
   args: unknown[];
   faults: string[];
   ok: boolean;
+  corrupted?: boolean;
   status?: number;
   result?: unknown;
   error?: string;

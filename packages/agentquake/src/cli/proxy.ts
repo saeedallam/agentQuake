@@ -2,6 +2,7 @@ import { createServer, type IncomingMessage, type Server } from 'node:http';
 import type { Run } from '../library/run.js';
 import { ToolFailure } from '../library/tool-failure.js';
 import { FailedReply } from './failed-reply.js';
+import { httpPayload, type HttpReply } from './payloads.js';
 
 const HOP_BY_HOP = new Set([
   'connection',
@@ -25,11 +26,7 @@ export interface ProxyOptions {
   log?: (message: string) => void;
 }
 
-interface UpstreamReply {
-  status: number;
-  headers: Record<string, string>;
-  body: Uint8Array;
-}
+type UpstreamReply = HttpReply;
 
 export async function startProxy(options: ProxyOptions): Promise<Server> {
   const { run, tools } = options;
@@ -74,7 +71,7 @@ export async function startProxy(options: ProxyOptions): Promise<Server> {
         }
         return reply;
       },
-      { path },
+      { path, payload: httpPayload },
     );
 
     try {

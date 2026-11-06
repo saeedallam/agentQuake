@@ -128,4 +128,26 @@ describe('startProxy', () => {
       });
     });
   });
+
+  it('records no silent fault when the body has nothing to truncate', async () => {
+    await withProxy(
+      {
+        faults: [
+          {
+            id: 'cut',
+            type: 'truncated_response',
+            target: { tool: 'weather' },
+            config: { keep: 0.5 },
+          },
+        ],
+      },
+      async (base, run) => {
+        const response = await fetch(`${base}/weather/forecast`);
+
+        expect(response.status).toBe(200);
+        expect(await response.json()).toEqual({ sunny: true });
+        expect(run.report().injectedFaults).toBe(0);
+      },
+    );
+  });
 });

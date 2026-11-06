@@ -44,6 +44,7 @@ export type ParseResult =
 export function parseScenario(
   sourceYaml: string,
   knownFaultTypes: string[],
+  unsupportedFaultTypes: string[] = [],
 ): ParseResult {
   let raw: unknown;
   try {
@@ -73,7 +74,12 @@ export function parseScenario(
 
   const unknownTypes: ValidationIssue[] = [];
   result.data.faults.forEach((fault, index) => {
-    if (!knownFaultTypes.includes(fault.type)) {
+    if (unsupportedFaultTypes.includes(fault.type)) {
+      unknownTypes.push({
+        path: `faults.${index}.type`,
+        message: `"${fault.type}" is not supported here yet; use the agentquake library or CLI`,
+      });
+    } else if (!knownFaultTypes.includes(fault.type)) {
       unknownTypes.push({
         path: `faults.${index}.type`,
         message: `Unknown fault type "${fault.type}". Known types: ${knownFaultTypes.join(', ')}`,

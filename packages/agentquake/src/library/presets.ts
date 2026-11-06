@@ -5,6 +5,7 @@ export const PRESET_NAMES = [
   'rate-limited',
   'slow',
   'outage',
+  'silent',
 ] as const;
 
 export type PresetName = (typeof PRESET_NAMES)[number];
@@ -25,4 +26,8 @@ export const PRESETS: Record<PresetName, FaultRule[]> = {
   ],
   slow: [everyTool('slow', 'latency', 0.5, { delayMs: 1000 })],
   outage: [everyTool('outage', 'http_error', 1, { status: 503 })],
+  silent: [
+    everyTool('silent-empty', 'empty_response', 0.3, { mode: 'no-results' }),
+    everyTool('silent-truncated', 'truncated_response', 0.3, { keep: 0.5 }),
+  ],
 };

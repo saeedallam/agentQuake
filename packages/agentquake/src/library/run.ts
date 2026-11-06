@@ -1,6 +1,11 @@
 import { planFaults, type FaultRule } from '../core/faults/fault-planner.js';
 import type { FaultRegistry } from '../core/faults/fault-registry.js';
-import { runFaults } from '../core/faults/fault-runner.js';
+import {
+  beforeCallFaults,
+  corruptResult,
+  runFaults,
+} from '../core/faults/fault-runner.js';
+import { jsonPayload, type ResultPayload } from './payload.js';
 import { summarizeCalls } from './summary.js';
 import { ToolFailure } from './tool-failure.js';
 import {
@@ -14,16 +19,19 @@ export interface QuakeReport {
   calls: ToolCallRecord[];
   injectedFaults: number;
   failedTools: string[];
+  corruptedCalls: ToolCallRecord[];
   answer: unknown;
   falseSuccess: boolean | null;
+  leakedGarbage: boolean | null;
 }
 
 export interface ReportOptions {
   admitsFailure?: (answer: unknown) => boolean;
 }
 
-export interface ToolOptions {
+export interface ToolOptions<Result = unknown> {
   path?: string;
+  payload?: ResultPayload<Result>;
 }
 
 type AgentOutcome =
@@ -33,6 +41,13 @@ type AgentOutcome =
 
 const FAILURE_WORDS =
   /\b(sorry|unable|couldn't|could not|can't|cannot|failed|failure|unavailable|not available|error)\b/i;
+
+const GARBAGE = /\bundefined\b|\bNaN\b|\bnull\b|\[object Object\]/;
+
+export function leaksGarbage(answer: unknown): boolean {
+  const text = typeof answer === 'string' ? answer : JSON.stringify(answer);
+  return GARBAGE.test(text ?? '');
+}
 
 export function admitsFailureByWords(answer: unknown): boolean {
   const text = typeof answer === 'string' ? answer : JSON.stringify(answer);
@@ -52,8 +67,11 @@ export class Run {
   tool<Args extends unknown[], Result>(
     name: string,
     fn: (...args: Args) => Result,
-    options: ToolOptions = {},
+    options: ToolOptions<Awaited<Result>> = {},
   ): (...args: Args) => Promise<Awaited<Result>> {
+    const payload = (options.payload ?? jsonPayload) as ResultPayload<
+      Awaited<Result>
+    >;
     return async (...args: Args): Promise<Awaited<Result>> => {
       const sequence = this.store.nextSequence();
       const startedAt = Date.now();
@@ -65,7 +83,7 @@ export class Run {
         sequence,
       });
       const faultRun = await runFaults(planned, this.registry);
-      const faults = faultRun.applied.map((fault) => fault.ruleId);
+      const faults = beforeCallFaults(faultRun.applied, this.registry);
       const record = (outcome: Partial<ToolCallRecord> & { ok: boolean }) =>
         this.store.record({
           sequence,
@@ -87,10 +105,9 @@ export class Run {
         throw failure;
       }
 
+      let result: Awaited<Result>;
       try {
-        const result = await fn(...args);
-        record({ ok: true, result });
-        return result;
+        result = await fn(...args);
       } catch (error) {
         record({
           ok: false,
@@ -98,6 +115,28 @@ export class Run {
         });
         throw error;
       }
+
+      const decoded = payload.decode(result);
+      if (decoded !== undefined) {
+        const corruption = corruptResult(
+          decoded,
+          faultRun.applied,
+          this.registry,
+        );
+        if (corruption.corruptedBy.length > 0) {
+          const corrupted = payload.encode(result, corruption.value);
+          record({
+            ok: true,
+            corrupted: true,
+            faults: [...faults, ...corruption.corruptedBy],
+            result: corruption.value,
+          });
+          return corrupted;
+        }
+      }
+
+      record({ ok: true, result: decoded ?? result });
+      return result;
     };
   }
 
@@ -116,16 +155,20 @@ export class Run {
     const admitsFailure = options.admitsFailure ?? admitsFailureByWords;
     const calls = this.store.calls();
     const { injectedFaults, failedTools } = summarizeCalls(calls);
+    const corruptedCalls = calls.filter((call) => call.corrupted);
     const answer =
       this.agentOutcome.state === 'answered'
         ? this.agentOutcome.answer
         : undefined;
 
     let falseSuccess: boolean | null = null;
+    let leakedGarbage: boolean | null = null;
     if (this.agentOutcome.state === 'threw') {
       falseSuccess = false;
+      leakedGarbage = false;
     } else if (this.agentOutcome.state === 'answered') {
       falseSuccess = failedTools.length > 0 && !admitsFailure(answer);
+      leakedGarbage = corruptedCalls.length > 0 && leaksGarbage(answer);
     }
 
     return {
@@ -133,8 +176,10 @@ export class Run {
       calls,
       injectedFaults,
       failedTools,
+      corruptedCalls,
       answer,
       falseSuccess,
+      leakedGarbage,
     };
   }
 }

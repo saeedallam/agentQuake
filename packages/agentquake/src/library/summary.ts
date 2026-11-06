@@ -3,6 +3,7 @@ import type { ToolCallRecord } from './trace-store.js';
 export interface CallSummary {
   injectedFaults: number;
   failedTools: string[];
+  corruptedCount: number;
 }
 
 export function summarizeCalls(calls: ToolCallRecord[]): CallSummary {
@@ -19,5 +20,6 @@ export function summarizeCalls(calls: ToolCallRecord[]): CallSummary {
     failedTools: [...lastCall.values()]
       .filter((call) => !call.ok)
       .map((call) => call.tool),
+    corruptedCount: calls.filter((call) => call.corrupted).length,
   };
 }

@@ -17,7 +17,7 @@ Usage:
   agentquake report [traces.jsonl]
 
 Scenario options:
-  --preset <name>     flaky, rate-limited, slow or outage
+  --preset <name>     flaky, rate-limited, slow, outage or silent
   --scenario <file>   a YAML file with "faults" (and an optional "seed")
   --seed <number>     replay the same faults
   --traces <file>     where to write traces (default: agentquake-traces.jsonl)
