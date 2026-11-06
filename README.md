@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/logo-dark.png">
-    <img src="assets/logo-light.png" width="160" alt="agentquake logo: a robot head whose face is a seismograph line">
+    <img src="assets/logo-light.png" width="160" alt="agentQuake logo: a robot head whose face is a seismograph line">
   </picture>
 </p>
 
@@ -29,7 +29,7 @@ Break your agent before production does.</p>
 
 ---
 
-agentquake sits as a proxy between an AI agent and the tools it calls. It
+agentQuake sits as a proxy between an AI agent and the tools it calls. It
 forwards each call to the real tool, injects faults defined in a YAML
 scenario, and records every call as a trace, so you can see exactly how your
 agent behaves when things go wrong.
@@ -51,13 +51,13 @@ happens, agents fail in ways that are hard to spot:
   worked.
 - **They claim success** after a call failed, and the user never finds out.
 
-agentquake answers the question nobody tests: what does your agent do when
+agentQuake answers the question nobody tests: what does your agent do when
 its tools fail?
 
 ## How it works
 
 ```
-Agent  ──>  agentquake  ──>  Real tool
+Agent  ──>  agentQuake  ──>  Real tool
               │
               ├─ plans faults from the scenario (seeded, repeatable)
               ├─ applies them: delay, error status, or timeout
@@ -196,12 +196,19 @@ When a fault fires, the agent receives a normal MCP tool result with
 
 - [x] **Phase 1: HTTP proxy.** Seeded faults (latency, HTTP errors,
       timeouts), YAML scenarios, traces with secrets redacted
-- [ ] **Phase 2: MCP.** Streamable HTTP proxy is done, stdio is in progress
-- [ ] **Phase 3: Scoring.** Repeated runs in the background, evaluators for
-      loops, retries, cost, false success and prompt injection, and a report
-      with a score
-- [ ] **Phase 4: Tooling.** A CLI (`npx agentquake run`), a GitHub Action
-      that fails the build when the score drops, and a dashboard
+- [ ] **Phase 2: MCP.** Streamable HTTP proxy is done; the stdio bridge is
+      built and will ship with the CLI
+- [ ] **Library (0.1.0).** `npm i -D agentquake`, wrap your tools inside a
+      Vitest or Jest test, no server needed. See the
+      [planned API](docs/library-api.md)
+- [ ] **CLI.** `npx agentquake proxy` and `npx agentquake stdio`, traces in
+      a JSONL file
+- [ ] **Scoring.** Evaluators for loops, retries, cost, false success and
+      prompt injection, and a report with a score, in all three levels
+- [ ] **Team server.** This NestJS server with PostgreSQL, a GitHub Action
+      and a dashboard
+
+The plan is explained in [ADR 0006](docs/adr/0006-three-levels-shared-core.md).
 
 ## Development
 
