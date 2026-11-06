@@ -1,0 +1,57 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  id-token: write # lets npm verify this workflow (trusted publishing)
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+          cache: npm
+
+      - name: Use npm 12
+        run: npm install -g npm@12.2.1
+
+      - name: Check the tag matches the package version
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+        run: |
+          version=$(node -p "require('./packages/agentquake/package.json').version")
+          if [ "$TAG" != "v$version" ]; then
+            echo "::error::Release tag $TAG does not match agentquake $version. Tag it v$version."
+            exit 1
+          fi
+
+      - run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Type check
+        run: npm run typecheck -w agentquake
+
+      - name: Unit tests
+        run: npm test -w agentquake
+
+      - name: Build
+        run: npm run build -w agentquake
+
+      - name: Publish
+        working-directory: packages/agentquake
+        run: npm publish --access public
