@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   parseJsonBody,
+  readMessageId,
   readToolCall,
   toolErrorResponse,
 } from './mcp-message.js';
@@ -89,6 +90,25 @@ describe('readToolCall', () => {
       expect(call?.arguments).toEqual({});
     },
   );
+});
+
+describe('readMessageId', () => {
+  it.each([
+    ['{"jsonrpc":"2.0","id":7,"method":"tools/list"}', 7],
+    ['{"jsonrpc":"2.0","id":"abc","result":{}}', 'abc'],
+  ])('reads the id of %s', (line, id) => {
+    expect(readMessageId(line)).toBe(id);
+  });
+
+  it.each([
+    '{"jsonrpc":"2.0","method":"notifications/initialized"}',
+    '{"jsonrpc":"2.0","id":null,"error":{}}',
+    '{abc',
+    '42',
+    '',
+  ])('returns null when there is no usable id: %j', (line) => {
+    expect(readMessageId(line)).toBeNull();
+  });
 });
 
 describe('toolErrorResponse', () => {
