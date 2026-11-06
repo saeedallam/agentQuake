@@ -1,10 +1,6 @@
 import { parse as parseYaml, YAMLParseError } from 'yaml';
 import { z } from 'zod';
-import {
-  issuesFrom,
-  slugSchema,
-  type ValidationIssue,
-} from '../common/validation.js';
+import { issuesFrom, slugSchema, type ValidationIssue } from '../validation.js';
 
 const MAX_SEED = 2_147_483_647;
 

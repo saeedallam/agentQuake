@@ -2,9 +2,9 @@ import { createHash } from 'node:crypto';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../common/prisma/prisma.service.js';
 import { invalidInput } from '../common/validation.js';
-import { FaultRegistry } from '../faults/fault-registry.js';
+import { FaultRegistry } from '../core/faults/fault-registry.js';
 import type { Prisma } from '../generated/prisma/client.js';
-import { parseScenario } from './scenario.js';
+import { parseScenario } from '../core/scenarios/scenario.js';
 
 @Injectable()
 export class ScenariosService {

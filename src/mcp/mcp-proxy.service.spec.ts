@@ -1,5 +1,5 @@
-import type { FaultRule } from '../faults/fault-planner.js';
-import { FaultRegistry } from '../faults/fault-registry.js';
+import type { FaultRule } from '../core/faults/fault-planner.js';
+import { FaultRegistry } from '../core/faults/fault-registry.js';
 import type {
   RunInfo,
   TargetProvider,

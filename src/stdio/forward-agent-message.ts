@@ -1,4 +1,4 @@
-import { readMessageId } from '../mcp/mcp-message.js';
+import { readMessageId } from '../core/mcp/mcp-message.js';
 
 export async function forwardAgentMessage(
   line: string,

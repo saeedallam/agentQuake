@@ -1,10 +1,8 @@
-import { Injectable } from '@nestjs/common';
 import type { FaultPlugin } from './fault.js';
 import { HttpErrorFault } from './http-error.fault.js';
 import { LatencyFault } from './latency.fault.js';
 import { TimeoutFault } from './timeout.fault.js';
 
-@Injectable()
 export class FaultRegistry {
   private readonly plugins = new Map<string, FaultPlugin>();
 

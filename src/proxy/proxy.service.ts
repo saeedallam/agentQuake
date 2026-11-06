@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { FaultRegistry } from '../faults/fault-registry.js';
-import { planFaults } from '../faults/fault-planner.js';
-import { runFaults } from '../faults/fault-runner.js';
+import { FaultRegistry } from '../core/faults/fault-registry.js';
+import { planFaults } from '../core/faults/fault-planner.js';
+import { runFaults } from '../core/faults/fault-runner.js';
 import { TraceRecorder } from '../traces/trace.recorder.js';
 import { TargetProvider } from './target.provider.js';
 import { UpstreamClient, UpstreamError } from './upstream.client.js';
