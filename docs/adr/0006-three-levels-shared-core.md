@@ -140,8 +140,10 @@ queue later, that gets its own ADR.
 - The server keeps working through the split. Every move is a refactor
   with green unit and e2e tests.
 - The Prisma pin (ADR 0002) only applies to `packages/server`.
-- The GitHub repository and the docs will be renamed to agentquake when
-  the packages are split. GitHub redirects the old URL.
+- The repository, the docs, the package name and the local database were
+  renamed to agentquake together with this ADR. GitHub redirects the old
+  repository URL. Local databases created with the old `agentchaos` user
+  must be recreated.
 - `AGENTS.md` will describe the workspaces and the core import rule.
 - The same trace shape is used by all three stores, so a JSONL file from
   level 2 can be loaded into the server later.

@@ -1,5 +1,5 @@
 {
-  "name": "agentchaos",
+  "name": "agentquake",
   "version": "0.0.1",
   "description": "Chaos testing for AI agents: inject faults between agents and their tools, record every call, and score how the agent behaves.",
   "author": "",

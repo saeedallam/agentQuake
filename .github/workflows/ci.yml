@@ -13,19 +13,19 @@ jobs:
       postgres:
         image: postgres:18-alpine
         env:
-          POSTGRES_USER: agentchaos
-          POSTGRES_PASSWORD: agentchaos
-          POSTGRES_DB: agentchaos
+          POSTGRES_USER: agentquake
+          POSTGRES_PASSWORD: agentquake
+          POSTGRES_DB: agentquake
         ports:
           - 5433:5432
         options: >-
-          --health-cmd "pg_isready -U agentchaos -d agentchaos"
+          --health-cmd "pg_isready -U agentquake -d agentquake"
           --health-interval 5s
           --health-timeout 3s
           --health-retries 10
 
     env:
-      DATABASE_URL: postgresql://agentchaos:agentchaos@127.0.0.1:5433/agentchaos
+      DATABASE_URL: postgresql://agentquake:agentquake@127.0.0.1:5433/agentquake
 
     steps:
       - uses: actions/checkout@v4

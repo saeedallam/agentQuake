@@ -4,7 +4,7 @@ Instructions for AI coding agents (and humans) working on this repository.
 
 ## Project
 
-AgentChaos is a chaos testing proxy for AI agents. See `README.md` for
+agentquake is a chaos testing proxy for AI agents. See `README.md` for
 the goal and `docs/adr/` for the decisions behind the setup.
 
 ## Setup

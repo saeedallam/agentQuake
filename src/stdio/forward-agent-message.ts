@@ -33,7 +33,7 @@ export async function forwardAgentMessage(
       id,
       error: {
         code: -32603,
-        message: `AgentChaos could not deliver the message: ${reason}`,
+        message: `agentquake could not deliver the message: ${reason}`,
       },
     });
   }
