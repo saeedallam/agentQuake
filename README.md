@@ -1,6 +1,14 @@
-# AgentChaos
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/logo-dark.png">
+    <img src="assets/logo-light.png" width="160" alt="AgentChaos logo: a robot head split by a lightning bolt">
+  </picture>
+</p>
 
-Chaos testing for AI agents.
+<h1 align="center">AgentChaos</h1>
+
+<p align="center"><b>Chaos testing for AI agents.</b><br>
+Break your agent before production does.</p>
 
 AgentChaos sits as a proxy between an AI agent and the tools it calls. It
 forwards each call to the real tool, injects faults defined in a YAML
