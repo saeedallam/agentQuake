@@ -119,6 +119,8 @@ interface QuakeReport {
   failedTools: string[]; // tools whose last call failed
   answer: unknown; // what run.agent returned
   falseSuccess: boolean | null; // null when run.agent was not used
+  corruptedCalls: ToolCallRecord[]; // added in 0.3.0, see ADR 0007
+  leakedGarbage: boolean | null; // added in 0.3.0, see ADR 0007
 }
 ```
 

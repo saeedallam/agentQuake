@@ -258,10 +258,12 @@ When a fault fires, the agent receives a normal MCP tool result with
       a JSONL file, `npx agentquake report`
 - [ ] **Better false success.** Mark the tools that matter, so an agent that
       recovers through a fallback tool is not flagged
-- [ ] **Silent faults.** `empty_response` and `truncated_response`: a 200
-      that carries nothing useful. Research on agent systems found these
-      about as damaging as crashes, and much harder to notice
-      ([AgentChaos, ASE 2026](https://www.developersdigest.tech/blog/agentchaos-fault-injection-agent-robustness))
+- [x] **Silent faults (0.3.0).** `empty_response` and `truncated_response`:
+      a 200 that carries nothing useful. Research on agents found empty and
+      truncated model answers more harmful than crashes and rarely diagnosed
+      ([AgentChaos](https://floritange.github.io/AgentChaos/)); these faults
+      apply the idea to tool answers. See
+      [ADR 0007](docs/adr/0007-silent-faults.md)
 - [ ] **Scoring.** Evaluators for loops, retries, cost, false success and
       prompt injection, and a report with a score, in all three levels
 - [ ] **Team server.** This NestJS server with PostgreSQL, a GitHub Action
