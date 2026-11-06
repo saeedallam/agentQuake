@@ -77,3 +77,18 @@ npm run test:e2e   # needs the database
 
 Use Conventional Commits: `feat:`, `fix:`, `docs:`, `chore:`, `test:`,
 `refactor:`.
+
+## Releasing agentquake
+
+Releases are published to npm by `.github/workflows/release.yml` through
+npm trusted publishing. No npm token is stored anywhere, and npm attaches
+provenance that links each version to the commit that built it.
+
+1. In a pull request, bump `version` in `packages/agentquake/package.json`
+   (`npm version <patch|minor> -w agentquake --no-git-tag-version`) and
+   merge it.
+2. On GitHub, create a release with the tag `v<version>` (for example
+   `v0.4.0`) on `main`. Publishing the release starts the workflow.
+3. The workflow refuses to publish if the tag does not match the version.
+
+Never run `npm publish` from a laptop.
