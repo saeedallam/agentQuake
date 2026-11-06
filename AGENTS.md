@@ -11,11 +11,16 @@ the goal and `docs/adr/` for the decisions behind the setup.
 
 ```bash
 cp packages/server/.env.example packages/server/.env
-npm install          # also builds the core and runs `prisma generate`
+npm ci               # also builds the core and runs `prisma generate`
 docker compose up -d # PostgreSQL on 127.0.0.1:5433
 npm run db:migrate
 npm run db:seed      # optional demo data
 ```
+
+Use `npm ci`, not `npm install`, to install or to sync after a pull: it
+installs exactly what `package-lock.json` says and never rewrites it. Use
+`npm install <package>` only to add or upgrade a dependency, and commit the
+lock file with that change.
 
 ## Layout
 
