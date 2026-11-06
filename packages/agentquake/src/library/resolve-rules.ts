@@ -2,17 +2,22 @@ import { z } from 'zod';
 import type { FaultRule } from '../core/faults/fault-planner.js';
 import { issuesFrom, type ValidationIssue } from '../core/validation.js';
 import { PRESET_NAMES, PRESETS, type PresetName } from './presets.js';
+import type { TraceStore } from './trace-store.js';
 
 export interface QuakeOptions {
   preset?: PresetName;
   faults?: FaultRuleInput[];
   seed?: number;
+  store?: TraceStore;
 }
 
 const faultRuleSchema = z.object({
   id: z.string().min(1),
   type: z.string().min(1),
-  target: z.object({ tool: z.string().min(1) }),
+  target: z.object({
+    tool: z.string().min(1),
+    path: z.string().min(1).optional(),
+  }),
   probability: z.number().min(0).max(1).default(1),
   config: z.record(z.string(), z.unknown()).default({}),
 });

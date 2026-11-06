@@ -1,7 +1,7 @@
 {
   "name": "agentquake",
-  "version": "0.1.0",
-  "description": "Chaos testing for AI agents: make your agent's tools fail inside your tests and see whether it copes, retries or lies about success.",
+  "version": "0.2.0",
+  "description": "Chaos testing for AI agents: make your agent's tools fail (in your tests, behind an HTTP proxy or around an MCP server) and see whether it copes, retries or lies about success.",
   "keywords": [
     "ai",
     "agents",
@@ -22,6 +22,9 @@
   "homepage": "https://github.com/saeedallam/agentQuake#readme",
   "bugs": "https://github.com/saeedallam/agentQuake/issues",
   "type": "module",
+  "bin": {
+    "agentquake": "./dist/cli/main.js"
+  },
   "engines": {
     "node": ">=22.12"
   },

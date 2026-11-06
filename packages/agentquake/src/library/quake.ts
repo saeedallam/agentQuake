@@ -9,5 +9,5 @@ export function quake(options: QuakeOptions = {}): Run {
   const rules = resolveRules(options, registry.types());
   const seed = options.seed ?? Math.floor(Math.random() * MAX_SEED);
 
-  return new Run(rules, seed, registry);
+  return new Run(rules, seed, registry, options.store);
 }

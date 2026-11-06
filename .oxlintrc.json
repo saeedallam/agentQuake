@@ -9,7 +9,10 @@
   },
   "overrides": [
     {
-      "files": ["packages/agentquake/**"],
+      "files": [
+        "packages/agentquake/src/core/**",
+        "packages/agentquake/src/library/**"
+      ],
       "rules": {
         "no-restricted-imports": [
           "error",
@@ -20,26 +23,70 @@
                 "message": "The agentquake package must not depend on NestJS or Prisma (ADR 0006)."
               },
               {
-                "group": ["@agentquake/server", "**/server/**", "../../../**"],
-                "message": "The agentquake package must not import from outside itself (ADR 0006)."
+                "group": [
+                  "@agentquake/server",
+                  "**/server/**",
+                  "../../../**",
+                  "../cli/*",
+                  "../../cli/*"
+                ],
+                "message": "The core and the library must not import the CLI or anything outside the package (ADR 0006)."
               }
             ],
             "paths": [
               {
                 "name": "node:http",
-                "message": "The agentquake core must not do network I/O (ADR 0006)."
+                "message": "The core and the library do no I/O; that belongs to the CLI (ADR 0006)."
               },
               {
                 "name": "node:https",
-                "message": "The agentquake core must not do network I/O (ADR 0006)."
+                "message": "The core and the library do no I/O; that belongs to the CLI (ADR 0006)."
               },
               {
                 "name": "http",
-                "message": "The agentquake core must not do network I/O (ADR 0006)."
+                "message": "The core and the library do no I/O; that belongs to the CLI (ADR 0006)."
               },
               {
                 "name": "https",
-                "message": "The agentquake core must not do network I/O (ADR 0006)."
+                "message": "The core and the library do no I/O; that belongs to the CLI (ADR 0006)."
+              },
+              {
+                "name": "node:fs",
+                "message": "The core and the library do no I/O; that belongs to the CLI (ADR 0006)."
+              },
+              {
+                "name": "fs",
+                "message": "The core and the library do no I/O; that belongs to the CLI (ADR 0006)."
+              },
+              {
+                "name": "node:child_process",
+                "message": "The core and the library do no I/O; that belongs to the CLI (ADR 0006)."
+              },
+              {
+                "name": "child_process",
+                "message": "The core and the library do no I/O; that belongs to the CLI (ADR 0006)."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["packages/agentquake/src/cli/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": [
+                  "@nestjs/*",
+                  "@prisma/*",
+                  "**/generated/**",
+                  "@agentquake/server",
+                  "**/server/**"
+                ],
+                "message": "The agentquake package must not depend on NestJS, Prisma or the server (ADR 0006)."
               }
             ]
           }
