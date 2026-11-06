@@ -11,8 +11,9 @@
 Break your agent before production does.</p>
 
 <p align="center">
+  <a href="https://www.npmjs.com/package/agentquake"><img src="https://img.shields.io/npm/v/agentquake?color=FF5A1F&amp;label=npm" alt="npm version"></a>
   <a href="https://github.com/saeedallam/agentquake/actions/workflows/ci.yml"><img src="https://github.com/saeedallam/agentquake/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <img src="https://img.shields.io/badge/status-phase_2_MCP-FF5A1F" alt="Status: phase 2, MCP">
+  <img src="https://img.shields.io/badge/status-early-FF5A1F" alt="Status: early">
   <img src="https://img.shields.io/badge/node-22.12%2B-5FA04E?logo=nodedotjs&amp;logoColor=white" alt="Node.js 22.12+">
   <img src="https://img.shields.io/badge/TypeScript-6-3178C6?logo=typescript&amp;logoColor=white" alt="TypeScript 6">
   <img src="https://img.shields.io/badge/NestJS-12-E0234E?logo=nestjs&amp;logoColor=white" alt="NestJS 12">
@@ -29,15 +30,40 @@ Break your agent before production does.</p>
 
 ---
 
-agentQuake sits as a proxy between an AI agent and the tools it calls. It
-forwards each call to the real tool, injects faults defined in a YAML
-scenario, and records every call as a trace, so you can see exactly how your
-agent behaves when things go wrong.
+agentQuake makes your agent's tools fail on purpose (slow answers, errors,
+timeouts) and records what the agent does about it, so you can see whether
+it copes, retries, loops or claims a success that never happened.
+
+Start inside your tests, with no server and no database:
+
+```bash
+npm i -D agentquake
+```
+
+```ts
+import { quake } from 'agentquake';
+
+it('survives a flaky weather API', async () => {
+  const run = quake({ preset: 'flaky', seed: 42 });
+
+  await run.agent(() =>
+    weatherAgent('What is the weather in Cairo?', {
+      getWeather: run.tool('getWeather', getWeather),
+    }),
+  );
+
+  expect(run.report().falseSuccess).toBe(false);
+});
+```
+
+More in the [package README](packages/agentquake/README.md). For tools you do
+not call from code (HTTP APIs and MCP servers), agentQuake also runs as a
+proxy, described below.
 
 > [!NOTE]
-> Phase 1 (HTTP proxy, faults, YAML scenarios, traces) is complete. Phase 2
-> (MCP) is in progress: the Streamable HTTP proxy works and stdio support is
-> being built. The API may still change.
+> `agentquake@0.1.0` (the library) is published. The proxy for HTTP and MCP
+> works through the team server below; a CLI that needs no server is next.
+> The API may still change before 1.0.
 
 ## Why
 
