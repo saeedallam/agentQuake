@@ -167,7 +167,7 @@ faults:
 ## More
 
 The project also has a server for teams. See the
-[repository](https://github.com/saeedallam/agentQuake).
+[repository](https://github.com/saeedallam/agentquake).
 
 ## License
 
