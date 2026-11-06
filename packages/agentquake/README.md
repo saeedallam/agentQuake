@@ -87,6 +87,14 @@ agent's output:
 run.report({ admitsFailure: (answer) => answer.status === 'error' });
 ```
 
+Two limits to know about:
+
+- The default word list is English only. For an agent that answers in
+  another language, pass your own `admitsFailure`.
+- Only the last call of each tool counts. If a tool fails and the agent
+  recovers by calling a different tool, the first tool still counts as
+  failed. Marking the tools that matter is planned.
+
 ## Same seed, same faults
 
 Whether a fault fires depends only on the seed, the call number and the

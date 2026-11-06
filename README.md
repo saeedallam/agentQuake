@@ -22,8 +22,9 @@ Break your agent before production does.</p>
 
 <p align="center">
   <a href="#quick-start">Quick start</a> ·
+  <a href="#command-line">Command line</a> ·
   <a href="#scenarios">Scenarios</a> ·
-  <a href="#mcp-tools">MCP</a> ·
+  <a href="#team-server">Team server</a> ·
   <a href="#roadmap">Roadmap</a> ·
   <a href="docs/adr">Design decisions</a>
 </p>
@@ -33,6 +34,8 @@ Break your agent before production does.</p>
 agentQuake makes your agent's tools fail on purpose (slow answers, errors,
 timeouts) and records what the agent does about it, so you can see whether
 it copes, retries, loops or claims a success that never happened.
+
+## Quick start
 
 Start inside your tests, with no server and no database:
 
@@ -56,6 +59,14 @@ it('survives a flaky weather API', async () => {
 });
 ```
 
+`falseSuccess` is `true` when a tool failed and the agent's answer still
+reads like a success. The default check looks for English words such as
+"sorry" or "failed", so pass your own check for other languages or for
+structured answers. See
+[the package README](packages/agentquake/README.md#the-report).
+
+## Command line
+
 For tools you do not call from code, the same package has a command line,
 still with no server and no database:
 
@@ -65,8 +76,9 @@ npx agentquake stdio --preset flaky -- node weather-server.js   # MCP over stdio
 npx agentquake report
 ```
 
-More in the [package README](packages/agentquake/README.md). For teams,
-agentQuake also runs as a server with PostgreSQL, described below.
+With `proxy`, point the agent at `http://127.0.0.1:4000/weather/...` instead
+of `https://api.weather.com/...`. Nothing else in the agent changes. More in
+the [package README](packages/agentquake/README.md).
 
 > [!NOTE]
 > The library and the command line are published as `agentquake`. Scoring
@@ -97,16 +109,21 @@ Agent  ──>  agentQuake  ──>  Real tool
               └─ records a trace for every call, secrets redacted
 ```
 
-Point your agent's tool base URL at the proxy instead of the real tool:
+agentQuake sits between the agent and its tools in one of three ways:
 
-```
-before:  https://api.weather.com/forecast
-after:   http://localhost:3000/proxy/<runId>/weather/forecast
-```
+| Way          | How                                       | Needs              |
+| ------------ | ----------------------------------------- | ------------------ |
+| Library      | `run.tool()` wraps a tool in your test    | Nothing            |
+| Command line | `npx agentquake proxy` or `stdio`         | Node.js            |
+| Team server  | NestJS API, runs and traces in PostgreSQL | Docker, PostgreSQL |
 
-Nothing else in the agent changes.
+All three share the same core, so a scenario and a seed give the same faults
+everywhere. See [ADR 0006](docs/adr/0006-three-levels-shared-core.md).
 
-## Quick start
+## Team server
+
+For teams that want runs and traces kept in one place, agentQuake also runs
+as a server. Most people should start with the library or the command line.
 
 Requirements: Node.js 22.12+, npm 11+ (npm 10.9 crashes while installing, see
 [ADR 0001](docs/adr/0001-use-esm-and-vitest.md)), Docker with Compose.
@@ -121,7 +138,7 @@ npm run db:migrate
 npm run start:dev          # API on http://localhost:3000
 ```
 
-## Usage
+### Usage
 
 ```bash
 # 1. A project and the tools your agent calls
@@ -144,6 +161,9 @@ curl -X POST localhost:3000/projects/my-agent/scenarios/flaky-weather/runs
 curl localhost:3000/runs/<runId>/traces
 curl -X POST localhost:3000/runs/<runId>/complete
 ```
+
+The agent then calls `http://localhost:3000/proxy/<runId>/weather/...`
+instead of the real API.
 
 ### Demo data
 
@@ -236,6 +256,12 @@ When a fault fires, the agent receives a normal MCP tool result with
       [the package README](packages/agentquake/README.md)
 - [x] **CLI.** `npx agentquake proxy` and `npx agentquake stdio`, traces in
       a JSONL file, `npx agentquake report`
+- [ ] **Better false success.** Mark the tools that matter, so an agent that
+      recovers through a fallback tool is not flagged
+- [ ] **Silent faults.** `empty_response` and `truncated_response`: a 200
+      that carries nothing useful. Research on agent systems found these
+      about as damaging as crashes, and much harder to notice
+      ([AgentChaos, ASE 2026](https://www.developersdigest.tech/blog/agentchaos-fault-injection-agent-robustness))
 - [ ] **Scoring.** Evaluators for loops, retries, cost, false success and
       prompt injection, and a report with a score, in all three levels
 - [ ] **Team server.** This NestJS server with PostgreSQL, a GitHub Action
