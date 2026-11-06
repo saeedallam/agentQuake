@@ -56,14 +56,21 @@ it('survives a flaky weather API', async () => {
 });
 ```
 
-More in the [package README](packages/agentquake/README.md). For tools you do
-not call from code (HTTP APIs and MCP servers), agentQuake also runs as a
-proxy, described below.
+For tools you do not call from code, the same package has a command line,
+still with no server and no database:
+
+```bash
+npx agentquake proxy --preset flaky --tool weather=https://api.weather.com
+npx agentquake stdio --preset flaky -- node weather-server.js   # MCP over stdio
+npx agentquake report
+```
+
+More in the [package README](packages/agentquake/README.md). For teams,
+agentQuake also runs as a server with PostgreSQL, described below.
 
 > [!NOTE]
-> `agentquake@0.1.0` (the library) is published. The proxy for HTTP and MCP
-> works through the team server below; a CLI that needs no server is next.
-> The API may still change before 1.0.
+> The library and the command line are published as `agentquake`. Scoring
+> is next. The API may still change before 1.0.
 
 ## Why
 
@@ -227,8 +234,8 @@ When a fault fires, the agent receives a normal MCP tool result with
 - [x] **Library (0.1.0).** `npm i -D agentquake`, wrap your tools inside a
       Vitest or Jest test, no server needed. See
       [the package README](packages/agentquake/README.md)
-- [ ] **CLI.** `npx agentquake proxy` and `npx agentquake stdio`, traces in
-      a JSONL file
+- [x] **CLI.** `npx agentquake proxy` and `npx agentquake stdio`, traces in
+      a JSONL file, `npx agentquake report`
 - [ ] **Scoring.** Evaluators for loops, retries, cost, false success and
       prompt injection, and a report with a score, in all three levels
 - [ ] **Team server.** This NestJS server with PostgreSQL, a GitHub Action

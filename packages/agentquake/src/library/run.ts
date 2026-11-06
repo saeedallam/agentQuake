@@ -1,18 +1,13 @@
 import { planFaults, type FaultRule } from '../core/faults/fault-planner.js';
 import type { FaultRegistry } from '../core/faults/fault-registry.js';
 import { runFaults } from '../core/faults/fault-runner.js';
+import { summarizeCalls } from './summary.js';
 import { ToolFailure } from './tool-failure.js';
-
-export interface ToolCallRecord {
-  sequence: number;
-  tool: string;
-  args: unknown[];
-  faults: string[];
-  ok: boolean;
-  result?: unknown;
-  error?: string;
-  durationMs: number;
-}
+import {
+  MemoryTraceStore,
+  type ToolCallRecord,
+  type TraceStore,
+} from './trace-store.js';
 
 export interface QuakeReport {
   seed: number;
@@ -25,6 +20,10 @@ export interface QuakeReport {
 
 export interface ReportOptions {
   admitsFailure?: (answer: unknown) => boolean;
+}
+
+export interface ToolOptions {
+  path?: string;
 }
 
 type AgentOutcome =
@@ -41,37 +40,37 @@ export function admitsFailureByWords(answer: unknown): boolean {
 }
 
 export class Run {
-  private readonly calls: ToolCallRecord[] = [];
-  private sequence = 0;
   private agentOutcome: AgentOutcome = { state: 'not-run' };
 
   constructor(
     private readonly rules: FaultRule[],
     readonly seed: number,
     private readonly registry: FaultRegistry,
+    private readonly store: TraceStore = new MemoryTraceStore(),
   ) {}
 
   tool<Args extends unknown[], Result>(
     name: string,
     fn: (...args: Args) => Result,
+    options: ToolOptions = {},
   ): (...args: Args) => Promise<Awaited<Result>> {
     return async (...args: Args): Promise<Awaited<Result>> => {
-      this.sequence += 1;
-      const sequence = this.sequence;
+      const sequence = this.store.nextSequence();
       const startedAt = Date.now();
 
       const planned = planFaults(this.rules, {
         toolSlug: name,
-        path: name,
+        path: options.path ?? name,
         seed: this.seed,
         sequence,
       });
       const faultRun = await runFaults(planned, this.registry);
       const faults = faultRun.applied.map((fault) => fault.ruleId);
       const record = (outcome: Partial<ToolCallRecord> & { ok: boolean }) =>
-        this.calls.push({
+        this.store.record({
           sequence,
           tool: name,
+          ...(options.path === undefined ? {} : { path: options.path }),
           args,
           faults,
           durationMs: Date.now() - startedAt,
@@ -79,8 +78,12 @@ export class Run {
         });
 
       if (faultRun.outcome.kind === 'respond') {
-        const failure = new ToolFailure(name, faultRun.outcome.status);
-        record({ ok: false, error: failure.message });
+        const failure = new ToolFailure(
+          name,
+          faultRun.outcome.status,
+          faultRun.outcome.body,
+        );
+        record({ ok: false, status: failure.status, error: failure.message });
         throw failure;
       }
 
@@ -111,7 +114,8 @@ export class Run {
 
   report(options: ReportOptions = {}): QuakeReport {
     const admitsFailure = options.admitsFailure ?? admitsFailureByWords;
-    const failedTools = this.failedTools();
+    const calls = this.store.calls();
+    const { injectedFaults, failedTools } = summarizeCalls(calls);
     const answer =
       this.agentOutcome.state === 'answered'
         ? this.agentOutcome.answer
@@ -126,24 +130,11 @@ export class Run {
 
     return {
       seed: this.seed,
-      calls: [...this.calls],
-      injectedFaults: this.calls.reduce(
-        (total, call) => total + call.faults.length,
-        0,
-      ),
+      calls,
+      injectedFaults,
       failedTools,
       answer,
       falseSuccess,
     };
-  }
-
-  private failedTools(): string[] {
-    const lastCall = new Map<string, ToolCallRecord>();
-    for (const call of this.calls) {
-      lastCall.set(call.tool, call);
-    }
-    return [...lastCall.values()]
-      .filter((call) => !call.ok)
-      .map((call) => call.tool);
   }
 }

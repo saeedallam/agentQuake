@@ -72,6 +72,35 @@ describe('Run.tool', () => {
   });
 });
 
+describe('Run.tool options', () => {
+  it('matches target.path against the path option and records it', async () => {
+    const run = quake({
+      faults: [
+        {
+          id: 'forecast-down',
+          type: 'http_error',
+          target: { tool: 'weather', path: '/forecast*' },
+          config: { status: 502 },
+        },
+      ],
+    });
+    const call = (path: string) =>
+      run
+        .tool('weather', () => 'ok', { path })()
+        .catch((error: unknown) => error);
+
+    await expect(call('/current')).resolves.toBe('ok');
+    await expect(call('/forecast/today')).resolves.toMatchObject({
+      status: 502,
+      body: '{"error":"HTTP 502"}',
+    });
+    expect(run.report().calls.map((c) => c.path)).toEqual([
+      '/current',
+      '/forecast/today',
+    ]);
+  });
+});
+
 describe('Run.report', () => {
   it('leaves falseSuccess null when run.agent was not used', () => {
     expect(quake().report().falseSuccess).toBeNull();

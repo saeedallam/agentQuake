@@ -93,10 +93,73 @@ Whether a fault fires depends only on the seed, the call number and the
 fault id. A failing test prints its seed in the report, so you can replay it
 exactly.
 
+## Tools you do not call from code
+
+When the agent talks to an HTTP API or starts an MCP server itself, there is
+no function to wrap. The `agentquake` command stands in the middle instead,
+with no server and no database. Every call is written to
+`agentquake-traces.jsonl`.
+
+### HTTP APIs: `agentquake proxy`
+
+```bash
+npx agentquake proxy --preset flaky --tool weather=https://api.weather.com
+```
+
+Point the agent at `http://127.0.0.1:4000/weather/...` instead of
+`https://api.weather.com/...`. A failing fault answers with its status
+(503, 429, 504) and the real API is not called. Use `--port` to change the
+port and repeat `--tool` for more APIs.
+
+### MCP servers over stdio: `agentquake stdio`
+
+In the agent's MCP configuration, put `npx agentquake stdio [options] --`
+in front of the server command:
+
+```json
+{
+  "command": "npx",
+  "args": [
+    "agentquake",
+    "stdio",
+    "--preset",
+    "flaky",
+    "--",
+    "node",
+    "weather-server.js"
+  ]
+}
+```
+
+agentQuake starts the real server, passes every message through, and only
+touches `tools/call`. A failing fault becomes a normal MCP tool result with
+`isError: true` and the same `id`, so the model sees that the tool failed.
+
+### Scenarios and reports
+
+```bash
+npx agentquake stdio --scenario chaos.yaml --seed 42 -- node server.js
+npx agentquake report agentquake-traces.jsonl
+```
+
+A scenario file holds `faults` (the same rules as in code) and an optional
+`seed`. For the proxy, `target.path` matches the request path
+(`/forecast*`); for MCP, `target.tool` is the MCP tool name (`get_forecast`).
+
+```yaml
+seed: 42
+faults:
+  - id: forecast-down
+    type: http_error
+    target: { tool: get_forecast }
+    probability: 0.5
+    config: { status: 503 }
+```
+
 ## More
 
-The project also has a proxy for HTTP and MCP tools and a server for teams.
-See the [repository](https://github.com/saeedallam/agentQuake).
+The project also has a server for teams. See the
+[repository](https://github.com/saeedallam/agentQuake).
 
 ## License
 
