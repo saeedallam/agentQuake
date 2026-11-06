@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../common/prisma/prisma.service.js';
-import type { PlannedFault } from '../core/faults/fault-planner.js';
-import type { Prisma } from '../generated/prisma/client.js';
 import {
+  type PlannedFault,
   redactHeaders,
   redactQuery,
   truncateBody,
-} from '../core/traces/trace-policy.js';
+} from 'agentquake/core';
+import type { Prisma } from '../generated/prisma/client.js';
 
 export interface TraceInput {
   runId: string;

@@ -81,8 +81,8 @@ Requirements: Node.js 22.12+, npm 11+ (npm 10.9 crashes while installing, see
 ```bash
 git clone https://github.com/saeedallam/agentquake.git
 cd agentquake
-npm install                # also generates the Prisma client
-cp .env.example .env
+cp packages/server/.env.example packages/server/.env
+npm install                # also builds the core and generates the Prisma client
 docker compose up -d       # PostgreSQL on 127.0.0.1:5433
 npm run db:migrate
 npm run start:dev          # API on http://localhost:3000
@@ -223,6 +223,18 @@ The plan is explained in [ADR 0006](docs/adr/0006-three-levels-shared-core.md).
 | `npm run db:migrate` | Create and apply migrations in development |
 | `npm run db:deploy`  | Apply migrations (CI and production)       |
 | `npm run db:seed`    | Load the demo data                         |
+
+The repository is an npm workspace with two packages:
+
+| Package               | What it is                                        |
+| --------------------- | ------------------------------------------------- |
+| `packages/agentquake` | The published package. `src/core` holds the logic |
+| `packages/server`     | This NestJS server with PostgreSQL. Private       |
+
+The scripts above run from the repository root. To run one package only, use
+`-w`, for example `npm test -w agentquake`. The server uses the built core
+(`dist`), so while you change the core and run the server at the same time,
+keep `npm run dev -w agentquake` running in a second terminal.
 
 CI runs all checks and the end-to-end tests against PostgreSQL on every pull
 request.

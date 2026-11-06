@@ -1,4 +1,4 @@
-import { readMessageId } from '../core/mcp/mcp-message.js';
+import { readMessageId } from 'agentquake/core';
 
 export async function forwardAgentMessage(
   line: string,

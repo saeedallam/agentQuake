@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { FaultRegistry } from '../core/faults/fault-registry.js';
+import { FaultRegistry } from 'agentquake/core';
 
 @Module({
   providers: [{ provide: FaultRegistry, useValue: new FaultRegistry() }],

@@ -9,7 +9,7 @@
   },
   "overrides": [
     {
-      "files": ["src/core/*.ts"],
+      "files": ["packages/agentquake/**"],
       "rules": {
         "no-restricted-imports": [
           "error",
@@ -17,67 +17,29 @@
             "patterns": [
               {
                 "group": ["@nestjs/*", "@prisma/*", "**/generated/**"],
-                "message": "src/core must not depend on NestJS or Prisma (ADR 0006)."
+                "message": "The agentquake package must not depend on NestJS or Prisma (ADR 0006)."
               },
               {
-                "group": ["../**"],
-                "message": "src/core must not import from outside src/core (ADR 0006)."
+                "group": ["@agentquake/server", "**/server/**", "../../../**"],
+                "message": "The agentquake package must not import from outside itself (ADR 0006)."
               }
             ],
             "paths": [
               {
                 "name": "node:http",
-                "message": "src/core must not do network I/O (ADR 0006)."
+                "message": "The agentquake core must not do network I/O (ADR 0006)."
               },
               {
                 "name": "node:https",
-                "message": "src/core must not do network I/O (ADR 0006)."
+                "message": "The agentquake core must not do network I/O (ADR 0006)."
               },
               {
                 "name": "http",
-                "message": "src/core must not do network I/O (ADR 0006)."
+                "message": "The agentquake core must not do network I/O (ADR 0006)."
               },
               {
                 "name": "https",
-                "message": "src/core must not do network I/O (ADR 0006)."
-              }
-            ]
-          }
-        ]
-      }
-    },
-    {
-      "files": ["src/core/*/**"],
-      "rules": {
-        "no-restricted-imports": [
-          "error",
-          {
-            "patterns": [
-              {
-                "group": ["@nestjs/*", "@prisma/*", "**/generated/**"],
-                "message": "src/core must not depend on NestJS or Prisma (ADR 0006)."
-              },
-              {
-                "group": ["../../**"],
-                "message": "src/core must not import from outside src/core (ADR 0006)."
-              }
-            ],
-            "paths": [
-              {
-                "name": "node:http",
-                "message": "src/core must not do network I/O (ADR 0006)."
-              },
-              {
-                "name": "node:https",
-                "message": "src/core must not do network I/O (ADR 0006)."
-              },
-              {
-                "name": "http",
-                "message": "src/core must not do network I/O (ADR 0006)."
-              },
-              {
-                "name": "https",
-                "message": "src/core must not do network I/O (ADR 0006)."
+                "message": "The agentquake core must not do network I/O (ADR 0006)."
               }
             ]
           }
