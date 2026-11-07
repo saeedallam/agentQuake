@@ -6,7 +6,8 @@
   "type": "module",
   "workspaces": [
     "packages/agentquake",
-    "packages/server"
+    "packages/server",
+    "examples/weather-agent"
   ],
   "scripts": {
     "postinstall": "npm run build -w agentquake && npm run db:generate -w @agentquake/server",
@@ -14,9 +15,9 @@
     "test": "npm test --workspaces",
     "test:e2e": "npm run test:e2e -w @agentquake/server",
     "typecheck": "npm run typecheck --workspaces",
-    "lint": "oxlint --type-aware packages/",
-    "format": "prettier --write \"packages/*/src/**/*.ts\" \"packages/*/test/**/*.ts\" \"packages/*/prisma/**/*.ts\" \"packages/*/*.ts\"",
-    "format:check": "prettier --check \"packages/*/src/**/*.ts\" \"packages/*/test/**/*.ts\" \"packages/*/prisma/**/*.ts\" \"packages/*/*.ts\"",
+    "lint": "oxlint --type-aware packages/ examples/",
+    "format": "prettier --write \"packages/*/src/**/*.ts\" \"packages/*/test/**/*.ts\" \"packages/*/prisma/**/*.ts\" \"packages/*/*.ts\" \"examples/*/src/**/*.ts\" \"examples/*/*.ts\"",
+    "format:check": "prettier --check \"packages/*/src/**/*.ts\" \"packages/*/test/**/*.ts\" \"packages/*/prisma/**/*.ts\" \"packages/*/*.ts\" \"examples/*/src/**/*.ts\" \"examples/*/*.ts\"",
     "start": "npm run start -w @agentquake/server",
     "start:dev": "npm run start:dev -w @agentquake/server",
     "start:debug": "npm run start:debug -w @agentquake/server",
@@ -24,7 +25,8 @@
     "db:generate": "npm run db:generate -w @agentquake/server",
     "db:migrate": "npm run db:migrate -w @agentquake/server --",
     "db:deploy": "npm run db:deploy -w @agentquake/server",
-    "db:seed": "npm run db:seed -w @agentquake/server"
+    "db:seed": "npm run db:seed -w @agentquake/server",
+    "example": "npm run demo -w @agentquake/example-weather-agent"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",
