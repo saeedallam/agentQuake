@@ -6,7 +6,11 @@ export {
   type ToolCallRecord,
   type TraceStore,
 } from './library/trace-store.js';
-export { summarizeCalls, type CallSummary } from './library/summary.js';
+export {
+  summarizeCalls,
+  unrecoveredTools,
+  type CallSummary,
+} from './library/summary.js';
 export { ToolFailure } from './library/tool-failure.js';
 export type { ResultPayload } from './library/payload.js';
 export {

@@ -76,27 +76,41 @@ report.seed; // pass it to quake({ seed }) to replay the same faults
 report.calls; // every tool call: arguments, faults, result or error
 report.injectedFaults; // how many faults fired
 report.failedTools; // tools whose last call failed
+report.unrecoveredTools; // failures the agent never recovered from
 report.falseSuccess; // the agent claimed success after a tool failed
 report.corruptedCalls; // calls whose answer a silent fault changed
 report.leakedGarbage; // a silent fault fired and the answer shows undefined, null or NaN
 ```
 
-`falseSuccess` is `true` when a tool's last call failed and the agent's
-answer does not admit it (words such as "sorry", "unable", "failed",
-"unavailable"). It is a heuristic; pass your own check when you know your
+`falseSuccess` is `true` when a tool call failed, no call succeeded after
+it, and the agent's answer does not admit a failure (words such as
+"sorry", "unable", "failed", "unavailable"). A retry that works, or a
+fallback to another tool, counts as recovering. `report.unrecoveredTools`
+lists the tools behind a `true`.
+
+When some tools must succeed, mark them. Then only those tools count, and
+each one counts as failed when its last call failed:
+
+```ts
+run.tool('bookFlight', bookFlight, { critical: true });
+```
+
+This catches an agent that lost its booking but went on to call other tools
+and then said "Booked!".
+
+The word list is a heuristic; pass your own check when you know your
 agent's output:
 
 ```ts
 run.report({ admitsFailure: (answer) => answer.status === 'error' });
 ```
 
-Two limits to know about:
+Limits to know about:
 
 - The default word list is English only. For an agent that answers in
   another language, pass your own `admitsFailure`.
-- Only the last call of each tool counts. If a tool fails and the agent
-  recovers by calling a different tool, the first tool still counts as
-  failed. Marking the tools that matter is planned.
+- Without critical tools, a failure followed by a successful call to an
+  unrelated tool counts as recovered. Mark the tools that matter.
 
 ## Silent faults
 

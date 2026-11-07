@@ -41,7 +41,8 @@
   },
   "files": [
     "dist",
-    "!dist/**/*.spec.*"
+    "!dist/**/*.spec.*",
+    "CHANGELOG.md"
   ],
   "publishConfig": {
     "access": "public"

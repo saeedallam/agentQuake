@@ -124,11 +124,13 @@ interface QuakeReport {
 }
 ```
 
-`falseSuccess` is `true` when at least one tool's last call failed and the
-agent still returned an answer that does not admit a failure. In 0.1.0
-"admits a failure" means the answer text matches common words such as
-"sorry", "unable", "couldn't", "failed" or "unavailable". The check can be
-replaced:
+`falseSuccess` is `true` when there is an unrecovered failure and the answer
+does not admit it. Since 0.4.0, a failure is recovered when any later call
+succeeds (a retry or a fallback); before, only the last call of each tool
+counted, which flagged agents that fell back to another tool. With
+`run.tool(name, fn, { critical: true })`, only critical tools count, and a
+critical tool is unrecovered when its last call failed.
+`report.unrecoveredTools` lists them.
 
 ```ts
 run.report({ admitsFailure: (answer) => answer.status === 'error' });
