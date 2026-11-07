@@ -1,8 +1,6 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/saeedallam/agentQuake/main/assets/logo-light.png" width="120" alt="agentQuake logo">
+  <img src="https://raw.githubusercontent.com/saeedallam/agentQuake/main/assets/wordmark-light.png" width="320" alt="agentQuake">
 </p>
-
-<h1 align="center">agentquake</h1>
 
 <p align="center"><b>Chaos testing for AI agents, inside your tests.</b><br>
 Make your agent's tools fail and see whether it copes, retries or lies about success.</p>

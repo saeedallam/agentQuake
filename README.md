@@ -1,11 +1,9 @@
-<p align="center">
+<h1 align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/logo-dark.png">
-    <img src="assets/logo-light.png" width="160" alt="agentQuake logo: a robot head whose face is a seismograph line">
+    <source media="(prefers-color-scheme: dark)" srcset="assets/wordmark-dark.svg">
+    <img src="assets/wordmark-light.svg" width="420" alt="agentQuake">
   </picture>
-</p>
-
-<h1 align="center">agentQuake</h1>
+</h1>
 
 <p align="center"><b>Chaos testing for AI agents.</b><br>
 Break your agent before production does.</p>
