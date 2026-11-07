@@ -1,6 +1,6 @@
 {
   "name": "agentquake",
-  "version": "0.3.0",
+  "version": "0.4.0-rc.0",
   "description": "Chaos testing for AI agents: make your agent's tools fail (in your tests, behind an HTTP proxy or around an MCP server) and see whether it copes, retries or lies about success.",
   "keywords": [
     "ai",
