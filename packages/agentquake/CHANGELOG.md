@@ -4,7 +4,7 @@ agentquake is in early development: minor versions can change behavior
 until 1.0. Changes that may affect existing tests are marked **Behavior
 change**.
 
-## Unreleased (0.4.0)
+## 0.4.0
 
 - **Behavior change:** `falseSuccess` no longer flags an agent that
   recovered. A failed call followed by any successful call (a retry or a
@@ -15,6 +15,8 @@ change**.
   only they count for `falseSuccess`, and each one fails when its last call
   failed.
 - `report.unrecoveredTools` lists the tools behind `falseSuccess`.
+- The `agentquake` command is kept when publishing with npm 12.
+- First release published from GitHub Actions, with provenance.
 
 ## 0.3.0
 
