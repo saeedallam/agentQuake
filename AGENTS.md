@@ -90,7 +90,13 @@ provenance that links each version to the commit that built it.
 2. On GitHub, create a release with the tag `v<version>` (for example
    `v0.4.0`) on `main`. Publishing the release starts the workflow.
 3. The workflow refuses to publish if the tag does not match the version.
-4. A prerelease version (for example `0.4.0-rc.0`, tag `v0.4.0-rc.0`) is
+   Otherwise it **stages** the release on npm (`npm stage publish`); it is
+   not public yet.
+4. A maintainer approves it with 2FA, on npmjs.com or with
+   `npm stage list agentquake` and `npm stage approve <stage-id>`. Only then
+   is the version published. CI alone can never publish, so a compromised
+   workflow cannot ship a release.
+5. A prerelease version (for example `0.4.0-rc.0`, tag `v0.4.0-rc.0`) is
    published under the npm tag `next`, so `npm i agentquake` keeps getting
    the latest stable version. Use one to test a change to the workflow.
 

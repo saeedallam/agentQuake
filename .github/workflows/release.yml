@@ -54,12 +54,12 @@ jobs:
       - name: Build
         run: npm run build -w agentquake
 
-      - name: Publish
+      - name: Stage the release on npm
         working-directory: packages/agentquake
         run: |
           version=$(node -p "require('./package.json').version")
           if [[ "$version" == *-* ]]; then
-            npm publish --access public --tag next
+            npm stage publish . --access public --tag next
           else
-            npm publish --access public
+            npm stage publish . --access public
           fi
