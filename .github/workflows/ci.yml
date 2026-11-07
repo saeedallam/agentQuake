@@ -58,5 +58,15 @@ jobs:
       - name: End-to-end tests
         run: npm run test:e2e
 
+      - name: Check that npm accepts the package manifest
+        working-directory: packages/agentquake
+        run: |
+          output=$(npm publish --dry-run --tag check 2>&1)
+          if grep -q "auto-corrected" <<<"$output"; then
+            grep -A5 "auto-corrected" <<<"$output"
+            echo "::error::npm would change package.json while publishing. Run npm pkg fix -w agentquake."
+            exit 1
+          fi
+
       - name: Build
         run: npm run build
