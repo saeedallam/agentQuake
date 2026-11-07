@@ -14,8 +14,6 @@ Break your agent before production does.</p>
   <img src="https://img.shields.io/badge/status-early-FF5A1F" alt="Status: early">
   <img src="https://img.shields.io/badge/node-22.12%2B-5FA04E?logo=nodedotjs&amp;logoColor=white" alt="Node.js 22.12+">
   <img src="https://img.shields.io/badge/TypeScript-6-3178C6?logo=typescript&amp;logoColor=white" alt="TypeScript 6">
-  <img src="https://img.shields.io/badge/NestJS-12-E0234E?logo=nestjs&amp;logoColor=white" alt="NestJS 12">
-  <img src="https://img.shields.io/badge/PostgreSQL-18-4169E1?logo=postgresql&amp;logoColor=white" alt="PostgreSQL 18">
 </p>
 
 <p align="center">
@@ -130,6 +128,11 @@ All three share the same core, so a scenario and a seed give the same faults
 everywhere. See [ADR 0006](docs/adr/0006-three-levels-shared-core.md).
 
 ## Team server
+
+<p>
+  <img src="https://img.shields.io/badge/NestJS-12-E0234E?logo=nestjs&amp;logoColor=white" alt="NestJS 12">
+  <img src="https://img.shields.io/badge/PostgreSQL-18-4169E1?logo=postgresql&amp;logoColor=white" alt="PostgreSQL 18">
+</p>
 
 For teams that want runs and traces kept in one place, agentQuake also runs
 as a server. Most people should start with the library or the command line.
