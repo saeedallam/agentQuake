@@ -59,11 +59,16 @@ it('survives a flaky weather API', async () => {
 });
 ```
 
-`falseSuccess` is `true` when a tool failed and the agent's answer still
-reads like a success. The default check looks for English words such as
+`falseSuccess` is `true` when a tool failed, nothing worked after it, and
+the agent's answer still reads like a success. The default check looks for English words such as
 "sorry" or "failed", so pass your own check for other languages or for
 structured answers. See
 [the package README](packages/agentquake/README.md#the-report).
+
+For a complete, runnable case, see
+[`examples/weather-agent`](examples/weather-agent): a Vercel AI SDK agent in
+a naive and a careful version, tested against outages and silent faults.
+`npm run example` runs it without an API key.
 
 ## Command line
 
