@@ -6,7 +6,7 @@ import {
   runFaults,
 } from '../core/faults/fault-runner.js';
 import { jsonPayload, type ResultPayload } from './payload.js';
-import { summarizeCalls } from './summary.js';
+import { summarizeCalls, unrecoveredTools } from './summary.js';
 import { ToolFailure } from './tool-failure.js';
 import {
   MemoryTraceStore,
@@ -19,6 +19,7 @@ export interface QuakeReport {
   calls: ToolCallRecord[];
   injectedFaults: number;
   failedTools: string[];
+  unrecoveredTools: string[];
   corruptedCalls: ToolCallRecord[];
   answer: unknown;
   falseSuccess: boolean | null;
@@ -31,6 +32,7 @@ export interface ReportOptions {
 
 export interface ToolOptions<Result = unknown> {
   path?: string;
+  critical?: boolean;
   payload?: ResultPayload<Result>;
 }
 
@@ -89,6 +91,7 @@ export class Run {
           sequence,
           tool: name,
           ...(options.path === undefined ? {} : { path: options.path }),
+          ...(options.critical ? { critical: true } : {}),
           args,
           faults,
           durationMs: Date.now() - startedAt,
@@ -156,6 +159,7 @@ export class Run {
     const calls = this.store.calls();
     const { injectedFaults, failedTools } = summarizeCalls(calls);
     const corruptedCalls = calls.filter((call) => call.corrupted);
+    const unrecovered = unrecoveredTools(calls);
     const answer =
       this.agentOutcome.state === 'answered'
         ? this.agentOutcome.answer
@@ -167,7 +171,7 @@ export class Run {
       falseSuccess = false;
       leakedGarbage = false;
     } else if (this.agentOutcome.state === 'answered') {
-      falseSuccess = failedTools.length > 0 && !admitsFailure(answer);
+      falseSuccess = unrecovered.length > 0 && !admitsFailure(answer);
       leakedGarbage = corruptedCalls.length > 0 && leaksGarbage(answer);
     }
 
@@ -176,6 +180,7 @@ export class Run {
       calls,
       injectedFaults,
       failedTools,
+      unrecoveredTools: unrecovered,
       corruptedCalls,
       answer,
       falseSuccess,

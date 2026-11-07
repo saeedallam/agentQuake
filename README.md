@@ -256,8 +256,8 @@ When a fault fires, the agent receives a normal MCP tool result with
       [the package README](packages/agentquake/README.md)
 - [x] **CLI.** `npx agentquake proxy` and `npx agentquake stdio`, traces in
       a JSONL file, `npx agentquake report`
-- [ ] **Better false success.** Mark the tools that matter, so an agent that
-      recovers through a fallback tool is not flagged
+- [x] **Better false success (0.4.0).** A retry or a fallback counts as
+      recovering, and `{ critical: true }` marks the tools that must succeed
 - [x] **Silent faults (0.3.0).** `empty_response` and `truncated_response`:
       a 200 that carries nothing useful. Research on agents found empty and
       truncated model answers more harmful than crashes and rarely diagnosed
