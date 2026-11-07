@@ -1,3 +1,4 @@
+import { styleText } from 'node:util';
 import { quake, type QuakeOptions } from 'agentquake';
 import { carefulAgent, naiveAgent } from './agents.js';
 import { fetchForecast } from './forecast-api.js';
@@ -44,7 +45,7 @@ const agents = [
 console.log(`Model: ${chooseModel(question).name}\n`);
 
 for (const [scenario, options] of scenarios) {
-  console.log(`== ${scenario}`);
+  console.log(styleText('cyan', `== ${scenario}`));
   for (const [name, build] of agents) {
     const run = quake({ seed: 1, ...options });
     const agent = build(
@@ -62,10 +63,13 @@ for (const [scenario, options] of scenarios) {
         ? `${report.corruptedCalls.length} corrupted call(s)`
         : '',
     ].filter(Boolean);
-    console.log(`  ${name.padEnd(8)} ${answer.trim()}`);
-    console.log(
-      `  ${''.padEnd(8)} -> ${flags.length > 0 ? flags.join(', ') : 'ok'}`,
-    );
+    const harmful = report.falseSuccess || report.leakedGarbage;
+    const verdict =
+      flags.length === 0
+        ? styleText('green', 'ok')
+        : styleText(harmful ? ['bold', 'red'] : 'yellow', flags.join(', '));
+    console.log(`  ${styleText('bold', name.padEnd(8))} ${answer.trim()}`);
+    console.log(`  ${''.padEnd(8)} -> ${verdict}`);
   }
   console.log('');
 }

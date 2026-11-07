@@ -35,6 +35,12 @@ agentQuake makes your agent's tools fail on purpose (slow answers, errors,
 timeouts) and records what the agent does about it, so you can see whether
 it copes, retries, loops or claims a success that never happened.
 
+<p align="center">
+  <img src="assets/demo.gif" width="732" alt="Terminal demo: the same weather agent written two ways. With an empty tool answer, the naive agent replies 'Forecast for undefined' and agentQuake flags LEAKED GARBAGE; the careful agent admits it could not get the forecast.">
+</p>
+
+<p align="center"><sub>The <a href="examples/weather-agent">weather-agent example</a>: <code>npm ci &amp;&amp; npm run example</code>. No API key needed.</sub></p>
+
 ## Quick start
 
 Start inside your tests, with no server and no database:
