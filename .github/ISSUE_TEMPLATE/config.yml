@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Question or idea
+    url: https://github.com/saeedallam/agentquake/discussions
+    about: Ask how to use agentQuake or share an idea in Discussions.
+  - name: Security problem
+    url: https://github.com/saeedallam/agentquake/security/advisories/new
+    about: Report vulnerabilities privately, not in a public issue.

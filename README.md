@@ -321,10 +321,12 @@ infrastructure classes.
 
 ## Contributing
 
-Conventions for humans and AI coding agents are in
-[`AGENTS.md`](AGENTS.md). Commits follow
-[Conventional Commits](https://www.conventionalcommits.org), and every pull
-request must pass the checks listed there.
+Bug reports, fault ideas from real incidents and pull requests are all
+welcome. Start with [`CONTRIBUTING.md`](CONTRIBUTING.md), or pick a
+[good first issue](https://github.com/saeedallam/agentquake/labels/good%20first%20issue).
+Questions go to [Discussions](https://github.com/saeedallam/agentquake/discussions).
+
+Conventions for humans and AI coding agents are in [`AGENTS.md`](AGENTS.md).
 
 ## License
 

@@ -1,0 +1,30 @@
+name: Fault request
+description: A way tools fail in real life that agentQuake should simulate.
+labels: [enhancement, fault]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The best faults come from real incidents. Tell us what a tool did
+        and what your agent did about it.
+  - type: textarea
+    id: failure
+    attributes:
+      label: How did the tool fail?
+      description: Status code, body, timing. What did the response look like?
+      placeholder: The search API returned 200 with results from a different query.
+    validations:
+      required: true
+  - type: textarea
+    id: agent
+    attributes:
+      label: What did the agent do?
+      placeholder: It answered confidently with the wrong results and never retried.
+    validations:
+      required: true
+  - type: textarea
+    id: config
+    attributes:
+      label: How would you configure it?
+      description: Optional. What the scenario YAML could look like.
+      render: yaml
