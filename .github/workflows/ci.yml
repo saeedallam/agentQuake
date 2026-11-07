@@ -61,7 +61,15 @@ jobs:
       - name: Check that npm accepts the package manifest
         working-directory: packages/agentquake
         run: |
-          output=$(npm publish --dry-run --tag check 2>&1)
+          # The dry run errors once this version is already on npm (right
+          # after every release). The manifest warnings print before that
+          # error, so read them either way.
+          output=$(npm publish --dry-run --tag check 2>&1) || true
+          if ! grep -q "Tarball Contents" <<<"$output"; then
+            echo "$output"
+            echo "::error::npm publish --dry-run did not pack the package."
+            exit 1
+          fi
           if grep -q "auto-corrected" <<<"$output"; then
             grep -A5 "auto-corrected" <<<"$output"
             echo "::error::npm would change package.json while publishing. Run npm pkg fix -w agentquake."

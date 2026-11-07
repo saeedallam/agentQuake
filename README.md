@@ -1,11 +1,9 @@
-<p align="center">
+<h1 align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/logo-dark.png">
-    <img src="assets/logo-light.png" width="160" alt="agentQuake logo: a robot head whose face is a seismograph line">
+    <source media="(prefers-color-scheme: dark)" srcset="assets/wordmark-dark.svg">
+    <img src="assets/wordmark-light.svg" width="420" alt="agentQuake">
   </picture>
-</p>
-
-<h1 align="center">agentQuake</h1>
+</h1>
 
 <p align="center"><b>Chaos testing for AI agents.</b><br>
 Break your agent before production does.</p>
@@ -34,6 +32,12 @@ Break your agent before production does.</p>
 agentQuake makes your agent's tools fail on purpose (slow answers, errors,
 timeouts) and records what the agent does about it, so you can see whether
 it copes, retries, loops or claims a success that never happened.
+
+<p align="center">
+  <img src="assets/demo.gif" width="732" alt="Terminal demo: the same weather agent written two ways. With an empty tool answer, the naive agent replies 'Forecast for undefined' and agentQuake flags LEAKED GARBAGE; the careful agent admits it could not get the forecast.">
+</p>
+
+<p align="center"><sub>The <a href="examples/weather-agent">weather-agent example</a>: <code>npm ci &amp;&amp; npm run example</code>. No API key needed.</sub></p>
 
 ## Quick start
 
