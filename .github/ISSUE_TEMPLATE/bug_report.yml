@@ -1,0 +1,48 @@
+name: Bug report
+description: agentQuake did something wrong or crashed.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. The seed from the report lets us replay the
+        exact same faults, so please include it.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you ran, what you expected, and what you got.
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: How to reproduce
+      description: The smallest test, scenario or command that shows it.
+      render: ts
+    validations:
+      required: true
+  - type: input
+    id: seed
+    attributes:
+      label: Seed
+      description: From `run.report().seed` or the CLI report.
+  - type: dropdown
+    id: where
+    attributes:
+      label: Where
+      options:
+        - Library (run.tool / run.agent)
+        - agentquake proxy
+        - agentquake stdio (MCP)
+        - Team server
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      description: agentquake, Node.js, and your agent framework.
+      placeholder: agentquake 0.4.0, Node 22.12, ai 6.0
+    validations:
+      required: true
