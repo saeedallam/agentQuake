@@ -11,10 +11,10 @@
   ],
   "scripts": {
     "postinstall": "npm run build -w agentquake && npm run db:generate -w @agentquake/server",
-    "build": "npm run build --workspaces",
-    "test": "npm test --workspaces",
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm test --workspaces --if-present",
     "test:e2e": "npm run test:e2e -w @agentquake/server",
-    "typecheck": "npm run typecheck --workspaces",
+    "typecheck": "npm run typecheck --workspaces --if-present",
     "lint": "oxlint --type-aware packages/ examples/",
     "format": "prettier --write \"packages/*/src/**/*.ts\" \"packages/*/test/**/*.ts\" \"packages/*/prisma/**/*.ts\" \"packages/*/*.ts\" \"examples/*/src/**/*.ts\" \"examples/*/*.ts\"",
     "format:check": "prettier --check \"packages/*/src/**/*.ts\" \"packages/*/test/**/*.ts\" \"packages/*/prisma/**/*.ts\" \"packages/*/*.ts\" \"examples/*/src/**/*.ts\" \"examples/*/*.ts\"",
