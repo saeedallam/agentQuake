@@ -1,0 +1,16 @@
+{
+  "name": "@agentquake/example-openai-agents",
+  "version": "0.0.0",
+  "private": true,
+  "license": "Apache-2.0",
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@openai/agents": "^0.21.0",
+    "agentquake": "*",
+    "zod": "^4.6.7"
+  }
+}
