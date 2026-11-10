@@ -10,6 +10,8 @@ describe('OpenAI Agents SDK inventory example', () => {
     },
   );
 
+  // agentQuake marks the call as corrupted, but it can't know that `tea` is
+  // the wrong SKU: only the agent's own validation can catch that.
   it('passes corrupt stock data through without validation', async () => {
     const { answer, report } = await runInventoryAgent('naive', 'silent');
     expect(report.corruptedCalls).toHaveLength(1);
