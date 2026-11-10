@@ -7,7 +7,8 @@
   "workspaces": [
     "packages/agentquake",
     "packages/server",
-    "examples/weather-agent"
+    "examples/weather-agent",
+    "examples/openai-agents"
   ],
   "scripts": {
     "postinstall": "npm run build -w agentquake && npm run db:generate -w @agentquake/server",

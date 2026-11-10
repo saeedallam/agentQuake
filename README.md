@@ -71,6 +71,8 @@ For a complete, runnable case, see
 [`examples/weather-agent`](examples/weather-agent): a Vercel AI SDK agent in
 a naive and a careful version, tested against outages and silent faults.
 `npm run example` runs it without an API key.
+The [OpenAI Agents SDK example](examples/openai-agents) tests the same kind of
+silent tool failure with a local inventory lookup and a scripted model.
 
 ## Command line
 
